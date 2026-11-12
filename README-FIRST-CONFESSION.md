@@ -1,6 +1,6 @@
 # Sunday At Church — First Confessional release
 
-This package updates the Confessional page with the Windows XP / early-2000s visual direction, explains the two project phases, presents the question bank in English and Spanish, embeds the two Adobe Sign web forms, and keeps manual verification as the submission workflow.
+This package updates the live Confessional page with a more restrained early-2000s editorial interface, explains the two project phases, presents the question bank in English and Spanish, embeds the two Adobe Sign web forms, and keeps manual verification as the submission workflow.
 
 ## Files to replace in GitHub
 
@@ -13,9 +13,9 @@ Keep your existing `site.js`, `index.html`, `wrangler.toml`, Turnstile site key,
 
 ## Important workflow details
 
-- The nine core prompts are marked CORE; the remaining prompts are OPTIONAL.
+- The ten core prompts are marked CORE; the remaining prompts are OPTIONAL.
 - Participants may record any of the 20 prompts and skip anything.
-- The opening confession is prompt 1: “I confess that the last time I went to a sauna was…”
+- The opening confession is prompt 1: “Forgive me, Father, for I've sinned. The last time I went to a sauna was…” / “Ave María Purísima. La última vez que fui a una sauna fue…”
 - English and Spanish Adobe Sign forms are embedded. The language switch shows the corresponding form.
 - The participant must declare that the Adobe Sign release has been completed. This is not automatic verification.
 - Every uploaded submission is stored with `submissionStatus: awaiting_manual_verification`, `releaseStatus: awaiting_manual_verification` and `footageStatus: received_pending_review`.
@@ -28,9 +28,9 @@ Keep your existing `site.js`, `index.html`, `wrangler.toml`, Turnstile site key,
 2. Confirm `ALLOWED_ORIGINS` includes `https://javierbotellaperez.com` and `https://www.javierbotellaperez.com` if both are used.
 3. Keep the existing Turnstile site key and matching secret configured. Ensure Turnstile allows hostname `javierbotellaperez.com`.
 4. Confirm `ENABLE_SUBMISSIONS` is intentionally set to `true` only if you are ready to accept real submissions.
-5. Test first with a consenting adult friend using non-sensitive test footage and test contact details. Do not use a real Adobe agreement unless you intend it to be legally signed.
+5. Before sharing the public link widely, complete a controlled end-to-end check with a consenting adult and non-sensitive footage. Treat any Adobe Sign form you complete as a real agreement.
 6. Check `/api/health` and confirm `submissionsEnabled: true`.
-7. Check that the test upload creates a `submissions/SAC-XXXXXXXX/` folder containing question clips and `submission.json`.
+7. Check that a controlled upload creates a `submissions/SAC-XXXXXXXX/` folder containing question clips and `submission.json`.
 8. Manually verify the signed PDF and every uploaded clip, archive to encrypted drives, verify the copies, and only then delete the temporary R2 copy.
 
 ## Manual review tracker
