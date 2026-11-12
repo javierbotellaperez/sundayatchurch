@@ -131,3 +131,27 @@ footer{background:var(--navy);border:0;color:#d8dfe2;padding:22px max(6vw,24px);
 /* Keep all interface copy upright and readable. */
 *,*::before,*::after{font-style:normal!important}
 @media(max-width:650px){.confessional{width:92vw;margin:35px auto 60px}.window-content{padding:24px 20px}.phase-grid{gap:10px}.guilt-intro{margin:28px 0 22px}.opening-confession{padding:21px 18px}.topbar{padding:17px 4vw}}
+
+/* Guided flow: one clear task at a time, avoiding a long single-page form */
+[hidden]{display:none!important}
+.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 10px}
+.step-link{display:flex;align-items:center;gap:9px;padding:12px 10px;border:1px solid var(--rule);background:#fff;color:#687176;text-align:left;cursor:pointer;font:600 10px 'DM Sans',Arial,sans-serif;letter-spacing:.06em}
+.step-link span{display:grid;place-items:center;width:24px;height:24px;border:1px solid #d2d0ca;border-radius:50%;font-size:10px}
+.step-link.active{border-color:var(--navy);color:var(--navy);background:#fff}
+.step-link.active span,.step-link.completed span{background:var(--navy);color:#fff;border-color:var(--navy)}
+.step-link.completed{color:#4f6b5d}
+.step-progress{height:3px;background:#e2dfd8;margin-bottom:24px;overflow:hidden}
+.step-progress span{display:block;width:25%;height:100%;background:#b18b66;transition:width .2s ease}
+.step-panel{scroll-margin-top:22px}
+.step-panel[hidden]{display:none!important}
+.step-actions{display:flex;justify-content:space-between;gap:12px;margin:20px 0 34px}
+.step-actions button{min-width:130px}
+.guilt-intro{margin:28px 0 30px}
+.guilt-intro p{font-style:normal!important}
+.step-link:focus-visible,.step-actions button:focus-visible{outline:3px solid #b18b66;outline-offset:3px}
+@media(max-width:620px){
+ .stepper{gap:5px}
+ .step-link{padding:10px 5px;justify-content:center;flex-direction:column;gap:5px;font-size:8px}
+ .step-link span{width:22px;height:22px}
+ .step-actions button{flex:1;min-width:0}
+}

@@ -49,3 +49,7 @@ Do not mark a participant as approved merely because they ticked the Adobe check
 ## Privacy and legal note
 
 This is a technical and editorial implementation, not legal approval. Before public launch, ensure the privacy notice accurately describes the actual controller, legal basis, special-category data handling where relevant, processors, hosting locations, retention, security, participant rights and contact route. Do not promise anonymity through post-production: participants must understand the agreed limits before recording.
+\n\nThe participant journey is now a four-step guided flow (About → Release → Confession → Submit), with language-specific labels and translated form placeholders. The Church/guilt context appears before the confession prompt.\n
+
+## Participant journey (current)
+The page uses a four-step guided flow: About, Release, Confession and Submit. The Church/guilt context appears on the opening screen before the confession prompt. Language switching covers interface labels, question text, form copy and placeholders in English and Spanish.

@@ -20,14 +20,24 @@
 </header>
 
 <main class="confessional xp-shell">
+  <nav class="stepper" aria-label="Participation steps">
+    <button type="button" class="step-link active" data-step="0"><span>01</span><b data-i18n="stepAbout">ABOUT</b></button>
+    <button type="button" class="step-link" data-step="1"><span>02</span><b data-i18n="stepRelease">RELEASE</b></button>
+    <button type="button" class="step-link" data-step="2"><span>03</span><b data-i18n="stepConfession">CONFESSION</b></button>
+    <button type="button" class="step-link" data-step="3"><span>04</span><b data-i18n="stepSubmit">SUBMIT</b></button>
+  </nav>
+  <div class="step-progress"><span id="stepProgress"></span></div>
   <a class="back" href="index.html" data-i18n="back">← BACK TO THE ENTRANCE</a>
 
-  <section class="intro-window xp-window">
-    <div class="xp-titlebar"><span data-i18n="windowTitle">Sunday At Church.exe — The Confessional</span><span class="window-controls">— □ ×</span></div>
+  <section class="intro-window xp-window step-panel active" data-panel="0">
+    <div class="xp-titlebar"><span data-i18n="windowTitle">Sunday At Church — The Confessional</span><span class="window-controls">— □ ×</span></div>
     <div class="window-content">
       <p class="eyebrow" data-i18n="eyebrow">PHASE 01 / THE CONFESSIONAL</p>
       <h1 data-i18n="confTitle">Welcome to the Confessional.</h1>
       <p class="intro" data-i18n="confIntro">A place to leave a thought, a memory or a confession about sauna culture. You don't need to be a regular. You just need a story.</p>
+      <div class="guilt-intro">
+        <p data-i18n="guiltIntro">Throughout history, the Church has often approached desire and sexuality through the language of sin and guilt. This project borrows the ritual of confession as a way to question the shame we may have been taught to carry. This is not a religious confession or a place of judgement. It is simply a space to speak freely, in your own words.</p>
+      </div>
       <div class="phase-grid">
         <article class="phase-card active-phase">
           <span class="phase-number">01</span>
@@ -46,7 +56,7 @@
     </div>
   </section>
 
-  <section class="xp-window release-window">
+  <section class="xp-window release-window step-panel" data-panel="1" hidden>
     <div class="xp-titlebar"><span data-i18n="releaseWindowTitle">01 — Participation & release</span><span class="window-controls">— □ ×</span></div>
     <div class="window-content">
       <p class="eyebrow" data-i18n="beforeBegin">BEFORE YOU BEGIN</p>
@@ -67,27 +77,24 @@
       </div>
 
       <div class="form-grid">
-        <label><span data-i18n="legalName">Full legal name</span><input id="legalName" autocomplete="name" required placeholder="Your legal name"></label>
-        <label><span data-i18n="email">Email address</span><input id="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+        <label><span data-i18n="legalName">Full legal name</span><input id="legalName" autocomplete="name" required data-i18n-placeholder="legalNamePlaceholder" placeholder="Your legal name"></label>
+        <label><span data-i18n="email">Email address</span><input id="email" type="email" autocomplete="email" required data-i18n-placeholder="emailPlaceholder" placeholder="you@example.com"></label>
         <label><span data-i18n="dob">Date of birth</span><input id="dob" type="date" required></label>
         <label><span data-i18n="creditChoice">How would you like to be credited?</span>
           <select id="credit"><option value="full" data-i18n="creditFull">Use my full name</option><option value="preferred" data-i18n="creditPreferred">Use a preferred name</option><option value="none" data-i18n="creditNone">Do not credit me</option></select>
         </label>
-        <label id="preferredWrap" class="wide" hidden><span data-i18n="preferredName">Preferred credit name</span><input id="preferredName" placeholder="Name to appear in the credits"></label>
+        <label id="preferredWrap" class="wide" hidden><span data-i18n="preferredName">Preferred credit name</span><input id="preferredName" data-i18n-placeholder="preferredPlaceholder" placeholder="Name to appear in the credits"></label>
       </div>
       <label class="check"><input type="checkbox" id="agree"><span data-i18n="agree">I confirm that I am 18 or older, participation is voluntary, and I have read the participation and privacy information.</span></label>
     </div>
   </section>
 
-  <section class="xp-window recorder-window">
+  <section class="xp-window recorder-window step-panel" data-panel="2" hidden>
     <div class="xp-titlebar"><span data-i18n="recorderWindowTitle">02 — Your confession</span><span class="window-controls">— □ ×</span></div>
     <div class="window-content">
       <p class="eyebrow" data-i18n="recordEyebrow">YOUR TESTIMONY</p>
       <h2 data-i18n="recordTitle">Whenever you're ready.</h2>
       <p class="intro" data-i18n="recordIntro">Start with the opening confession. The ten core prompts are the shared thread; the extra questions are there if you feel like saying more. Skip anything you don't want to answer.</p>
-      <div class="guilt-intro">
-        <p data-i18n="guiltIntro">Throughout history, the Church has often framed desire and sexuality through the language of sin and guilt. This project borrows the ritual of confession as a way of letting go of the shame we may have been taught to carry. This is not a religious confession, and there is no judgement here — only a space to speak freely, in your own words.</p>
-      </div>
       <div class="opening-confession">
         <span class="prompt-label" data-i18n="openingLabel">THE OPENING CONFESSION</span>
         <p data-i18n="openingPrompt">“Forgive me, Father, for I've sinned. The last time I went to a sauna was…”</p>
@@ -122,8 +129,12 @@
         <button id="skipBtn" class="xp-button secondary" type="button" data-i18n="skipQuestion">SKIP THIS QUESTION</button>
         <button id="nextBtn" class="xp-button" type="button" data-i18n="next">NEXT →</button>
       </div>
+    </div>
+  </section>
+  <section class="xp-window upload-panel step-panel" data-panel="3" hidden>
+    <div class="window-content">
       <div class="upload-area">
-        <p class="eyebrow" data-i18n="uploadEyebrow">03 / SEND YOUR CONFESSION</p>
+        <p class="eyebrow" data-i18n="uploadEyebrow">04 / SEND YOUR CONFESSION</p>
         <h3 data-i18n="uploadTitle">Ready to send?</h3>
         <p data-i18n="uploadIntro">You can submit any recorded answers. Your participation will remain pending until the filmmaker manually verifies both your Adobe release and the uploaded footage.</p>
         <div id="turnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
@@ -132,6 +143,10 @@
       </div>
     </div>
   </section>
+  <div class="step-actions">
+    <button type="button" id="stepBack" class="xp-button secondary" data-i18n="stepBack">BACK</button>
+    <button type="button" id="stepNext" class="xp-button" data-i18n="stepNext">CONTINUE</button>
+  </div>
   <p class="closing-note" data-i18n="closingNote">Thank you for trusting us with your story. You can leave a question unanswered; silence is also an answer.</p>
 </main>
 <footer><span>SUNDAY AT CHURCH</span><span data-i18n="footerText">THE CONFESSIONAL · PHASE 01</span></footer>
