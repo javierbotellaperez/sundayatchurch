@@ -1,37 +1,18 @@
-# Sunday At Church — bilingual Confessional prototype
+# Sunday At Church — bilingual website + Cloudflare backend scaffold
 
-This version provides an English / Spanish interface and a shortened draft participation release.
+This package contains the bilingual Confessional website and a Cloudflare Worker/R2 backend scaffold.
 
-## Important status
-This is a **prototype**, not ready to collect real participant data. It does not upload recordings, email signed forms, create legally reliable signed PDFs, or connect to Frame.io. The rights clause and data-protection notice are placeholders pending written clarification from IADT and appropriate review.
+## Upload to GitHub
+1. Unzip this package.
+2. Open the existing repository `javierbotellaperez/sundayatchurch`.
+3. Upload the **contents** of this folder to the repository root, preserving the `src/` folder.
+4. Replace the existing website files when GitHub asks. Do not upload the ZIP file itself.
+5. Commit to `main`.
 
-## Files
-- `index.html` — bilingual landing page
-- `confessional.html` — bilingual release and local recording interface
-- `confessional.js` — browser-local webcam recording
-- `site.js` — language switching and bilingual draft text
-- `styles.css` — visual design
+Keep the R2 bucket private. Do not put API tokens or secrets in GitHub.
 
-## Deploy
-Upload the individual files to the root of your `sundayatchurch` repository (not the ZIP itself). Keep `index.html` at the repository root. In Settings → Pages, publish `main` from `/(root)`.
+## Cloudflare
+See `CLOUDFLARE-SETUP.md` for the Worker deployment and R2 binding instructions. The Worker project name is `sundayatchurch-api`.
 
-## Test locally
-Run `python3 -m http.server 8000` from this folder and visit `http://localhost:8000`. Camera access generally requires HTTPS or localhost.
-
-## Before real submissions
-1. Confirm copyright and institutional licensing position with IADT.
-2. Finalise the release and a GDPR-compliant privacy notice with the correct data controller, legal basis, retention, access and rights information.
-3. Add a secure backend for participant registration, e-signature evidence, PDF generation, email delivery and private storage.
-4. Integrate Frame.io through a server-side API connection. Never put Frame.io credentials in frontend JavaScript.
-5. Test security, consent withdrawal and deletion procedures.
-
-
-## Frame.io OAuth callback (setup scaffold)
-
-The `oauth/callback.html` file has been added at the redirect path registered in Adobe Developer Console:
-
-`https://javierbotellaperez.github.io/sundayatchurch/oauth/callback.html`
-
-This is currently a **callback scaffold**, not a completed Frame.io integration. It checks the OAuth `state` value if one has been placed in this browser session, removes callback query parameters from the address bar, and does not display or store authorisation codes or tokens. The PKCE sign-in page and secure token-exchange flow still need to be implemented and tested before connecting a real Frame.io account.
-
-Keep the Adobe client ID in the eventual public SPA code only if required; never put access tokens, refresh tokens, client secrets, participant videos, or signed releases in this public GitHub repository.
+## Important
+This is not yet a live submission system. The front-end camera recorder is still browser-local and the upload UI is not connected to the API. The Worker is deliberately configured with `ENABLE_SUBMISSIONS = "false"`. Do not enable real submissions until the upload interface, Turnstile, participant release, privacy notice, IADT rights position, email/PDF workflow and retention/deletion procedures are complete and tested.

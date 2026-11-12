@@ -1,0 +1,11 @@
+name = "sundayatchurch-api"
+main = "src/index.js"
+compatibility_date = "2026-11-12"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "sundayatchurch"
+
+[vars]
+ENABLE_SUBMISSIONS = "false"
+ALLOWED_ORIGINS = "https://javierbotellaperez.github.io,https://javierbotellaperez.com,https://www.javierbotellaperez.com"
