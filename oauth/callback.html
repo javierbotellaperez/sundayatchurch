@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Frame.io connection — Sunday At Church</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; }
+    main { width: min(100%, 42rem); padding: 2rem; background: var(--surface, #fff); border-radius: 1rem; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">SUNDAY AT CHURCH · PRIVATE ADMIN AREA</p>
+    <h1>Frame.io connection</h1>
+    <p id="status">Checking the authorisation response…</p>
+    <p id="detail"></p>
+    <p><a href="../index.html">Return to the website</a></p>
+  </main>
+  <script>
+    // Callback scaffold only. It deliberately does not display, store, or exchange
+    // authorisation codes or access tokens. The matching PKCE sign-in flow must be
+    // implemented and tested before this page is used to connect a real account.
+    (() => {
+      const status = document.getElementById("status");
+      const detail = document.getElementById("detail");
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      const code = params.get("code");
+      const returnedState = params.get("state");
+      const expectedState = sessionStorage.getItem("sac_frameio_oauth_state");
+
+      // Remove the response parameters from the visible browser address bar.
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      if (error) {
+        status.textContent = "Authorisation was not completed.";
+        detail.textContent = "Adobe returned an authorisation error. No credentials have been stored.";
+        return;
+      }
+
+      if (!code || !returnedState) {
+        status.textContent = "This page is ready for the OAuth callback, but no authorisation response was received.";
+        detail.textContent = "Do not open this page directly to connect Frame.io. Start the sign-in flow from the private connection page once it has been configured.";
+        return;
+      }
+
+      if (!expectedState || returnedState !== expectedState) {
+        status.textContent = "The security check failed.";
+        detail.textContent = "The returned state did not match this browser session. Please restart the connection process. No credentials have been stored.";
+        return;
+      }
+
+      // Do not treat receipt of an authorisation code as a completed connection.
+      // The PKCE code-verifier exchange is intentionally not implemented yet.
+      sessionStorage.removeItem("sac_frameio_oauth_state");
+      status.textContent = "Adobe returned an authorisation code.";
+      detail.textContent = "The PKCE token-exchange step has not been added yet, so Frame.io is not connected. Do not share this page's URL or any authorisation codes.";
+    })();
+  </script>
+</body>
+</html>

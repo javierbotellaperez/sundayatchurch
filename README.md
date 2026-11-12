@@ -1,28 +1,37 @@
-# Sunday At Church — prototype
+# Sunday At Church — bilingual Confessional prototype
 
-A static GitHub Pages starter with:
-- A landing page for the two documentary spaces
-- A working local webcam/audio confessional prototype
-- Per-question WebM recording and manual download
-- A placeholder page for the future live cruising room
+This version provides an English / Spanish interface and a shortened draft participation release.
 
-## Run locally
-Camera/microphone access generally requires HTTPS or localhost.
-From this folder, run:
+## Important status
+This is a **prototype**, not ready to collect real participant data. It does not upload recordings, email signed forms, create legally reliable signed PDFs, or connect to Frame.io. The rights clause and data-protection notice are placeholders pending written clarification from IADT and appropriate review.
 
-    python3 -m http.server 8000
+## Files
+- `index.html` — bilingual landing page
+- `confessional.html` — bilingual release and local recording interface
+- `confessional.js` — browser-local webcam recording
+- `site.js` — language switching and bilingual draft text
+- `styles.css` — visual design
 
-Then visit http://localhost:8000
+## Deploy
+Upload the individual files to the root of your `sundayatchurch` repository (not the ZIP itself). Keep `index.html` at the repository root. In Settings → Pages, publish `main` from `/(root)`.
 
-## Publish with GitHub Pages
-1. Create a GitHub repository (for example `sunday-at-church`).
-2. Upload all files in this folder to the repository root.
-3. In Settings → Pages, choose deploy from the `main` branch and `/ (root)`.
-4. Open the generated HTTPS URL and test camera/microphone permissions.
+## Test locally
+Run `python3 -m http.server 8000` from this folder and visit `http://localhost:8000`. Camera access generally requires HTTPS or localhost.
 
-## Important prototype limitations
-- Recordings are created in the browser and downloaded manually; they are NOT uploaded or stored on a server.
-- Each answer is a separate `.webm` file. Browser support varies.
-- This is not yet suitable for collecting real documentary participant footage. Before public use, add a proper participant information/consent process, secure authenticated upload, access controls, retention/deletion policy, and GDPR review.
-- The Cruising Room is a placeholder. Real-time one-to-one video requires a signalling/video service (for example LiveKit) and server-side token generation. Never put API secrets in GitHub Pages frontend code.
-- The question copy is placeholder material and can be edited in `confessional.js`.
+## Before real submissions
+1. Confirm copyright and institutional licensing position with IADT.
+2. Finalise the release and a GDPR-compliant privacy notice with the correct data controller, legal basis, retention, access and rights information.
+3. Add a secure backend for participant registration, e-signature evidence, PDF generation, email delivery and private storage.
+4. Integrate Frame.io through a server-side API connection. Never put Frame.io credentials in frontend JavaScript.
+5. Test security, consent withdrawal and deletion procedures.
+
+
+## Frame.io OAuth callback (setup scaffold)
+
+The `oauth/callback.html` file has been added at the redirect path registered in Adobe Developer Console:
+
+`https://javierbotellaperez.github.io/sundayatchurch/oauth/callback.html`
+
+This is currently a **callback scaffold**, not a completed Frame.io integration. It checks the OAuth `state` value if one has been placed in this browser session, removes callback query parameters from the address bar, and does not display or store authorisation codes or tokens. The PKCE sign-in page and secure token-exchange flow still need to be implemented and tested before connecting a real Frame.io account.
+
+Keep the Adobe client ID in the eventual public SPA code only if required; never put access tokens, refresh tokens, client secrets, participant videos, or signed releases in this public GitHub repository.
