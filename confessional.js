@@ -2,39 +2,115 @@ const $ = (id) => document.getElementById(id);
 const API_BASE = "https://sundayatchurch-api.hi-d37.workers.dev";
 const TURNSTILE_SITE_KEY = "0x4AAAAAAF-g4KWyfvHl1wnb";
 
-const questionBank = { en: [
-    {section:"THE CONFESSION", type:"core", text:"Forgive me, Father, for I've sinned. The last time I went to a sauna was…", hint:"Say how long ago it was. It could have been yesterday, five years ago, or your first and last visit."},
-    {section:"THE FIRST TIME", type:"core", text:"What did you expect to find the first time you went to a sauna?", hint:"Think about what you imagined before you walked in."},
-    {section:"THE FIRST TIME", type:"core", text:"How was the experience compared to what you expected?", hint:"Did anything surprise you?"},
-    {section:"THE FIRST TIME", type:"extra", text:"Did your perception of saunas change after visiting one?", hint:"You can talk about the space, its atmosphere or how it works."},
-    {section:"DESIRE & BELONGING", type:"core", text:"Why do you go, or why did you go, to saunas?", hint:"There may be more than one reason."},
-    {section:"DESIRE & BELONGING", type:"core", text:"What do you find in a sauna that you might not find elsewhere?", hint:"Think beyond the obvious, if you like."},
-    {section:"DESIRE & BELONGING", type:"extra", text:"Do you think you go there exclusively for sex, or is there something else?", hint:"No answer is expected."},
-    {section:"DESIRE & BELONGING", type:"extra", text:"Have you ever visited a sauna without necessarily wanting to have sex? Why?", hint:"Tell us what brought you there."},
-    {section:"THE DIGITAL WORLD", type:"core", text:"Do you think dating apps and the internet have pushed saunas into the background?", hint:"You can agree, disagree or feel both things at once."},
-    {section:"THE DIGITAL WORLD", type:"extra", text:"What do saunas offer that the internet cannot?", hint:"Consider physical presence, anonymity, chance encounters or something else."},
-    {section:"THE DIGITAL WORLD", type:"extra", text:"Why do you think people still go to saunas?", hint:"What do you think people are looking for when they enter?"},
-    {section:"MEMORIES", type:"core", text:"Is there an experience in a sauna that you particularly remember?", hint:"It can be funny, tender, awkward, ordinary or unexpected."},
-    {section:"MEMORIES", type:"extra", text:"Have you ever been surprised by something you experienced there?", hint:"A moment, a person, a feeling or a situation."},
-    {section:"MEMORIES", type:"extra", text:"Is there something you've experienced in a sauna that you've never told anyone?", hint:"Only share what you feel comfortable sharing."},
-    {section:"THE RITUAL", type:"core", text:"Do you think there's something almost ritualistic about going to a sauna?", hint:"Think about routines, repetition, anticipation or the feeling of entering another world."},
-    {section:"THE RITUAL", type:"extra", text:"What do you think people are looking for when they enter a sauna?", hint:"This can be different from what they say they are looking for."},
-    {section:"THE FINAL WORD", type:"core", text:"What would you tell someone who has never been to a sauna and is preparing for their first visit?", hint:"Imagine speaking to a friend before their first time."},
-    {section:"THE FINAL WORD", type:"extra", text:"Describe a sauna in three words.", hint:"First words that come to mind are welcome."},
-    {section:"THE FINAL WORD", type:"extra", text:"Do you think saunas are disappearing, or do they still offer something we need?", hint:"What might we lose if these spaces disappeared?"},
-    {section:"THE FINAL WORD", type:"extra", text:"Is there anything I haven't asked that you'd like to confess?", hint:"This is your space. You can take the conversation somewhere else."}
+const questionBank = { es: [
+    {section:"LA CONFESIÓN", type:"core", text:"Ave María Purísima. La última vez que fui a una sauna fue…", hint:"Di cuánto tiempo ha pasado. Puede haber sido ayer, hace cinco años o tu primera y última visita."},
+    {section:"LA PRIMERA VEZ", type:"core", text:"¿Qué esperabas encontrar la primera vez que fuiste a una sauna?", hint:"Piensa en lo que imaginabas antes de entrar."},
+    {section:"LA PRIMERA VEZ", type:"core", text:"¿Cómo fue la experiencia en comparación con lo que esperabas?", hint:"¿Hubo algo que te sorprendiera?"},
+    {section:"LA PRIMERA VEZ", type:"extra", text:"¿Cambió tu percepción de las saunas después de visitar una?", hint:"Puedes hablar del espacio, de su ambiente o de cómo funciona."},
+    {section:"DESEO Y PERTENENCIA", type:"core", text:"¿Por qué vas, o por qué ibas, a las saunas?", hint:"Puede haber más de un motivo."},
+    {section:"DESEO Y PERTENENCIA", type:"core", text:"¿Qué encuentras en una sauna que quizá no encuentres en otros lugares?", hint:"Si quieres, piensa más allá de lo evidente."},
+    {section:"DESEO Y PERTENENCIA", type:"extra", text:"¿Crees que vas allí exclusivamente por sexo o hay algo más?", hint:"No hay una respuesta esperada."},
+    {section:"DESEO Y PERTENENCIA", type:"extra", text:"¿Has ido alguna vez a una sauna sin tener necesariamente ganas de mantener relaciones sexuales? ¿Por qué?", hint:"Cuéntanos qué te llevó allí."},
+    {section:"EL MUNDO DIGITAL", type:"core", text:"¿Crees que las aplicaciones de citas e internet han relegado las saunas a un segundo plano?", hint:"Puedes estar de acuerdo, en desacuerdo o sentir ambas cosas."},
+    {section:"EL MUNDO DIGITAL", type:"extra", text:"¿Qué ofrecen las saunas que internet no puede ofrecer?", hint:"Piensa en la presencia física, el anonimato, los encuentros fortuitos u otra cosa."},
+    {section:"EL MUNDO DIGITAL", type:"extra", text:"¿Por qué crees que la gente sigue yendo a las saunas?", hint:"¿Qué crees que buscan las personas cuando entran?"},
+    {section:"RECUERDOS", type:"core", text:"¿Hay alguna experiencia en una sauna que recuerdes especialmente?", hint:"Puede ser divertida, tierna, incómoda, cotidiana o inesperada."},
+    {section:"RECUERDOS", type:"extra", text:"¿Te ha sorprendido alguna vez algo que hayas vivido allí?", hint:"Un momento, una persona, una sensación o una situación."},
+    {section:"RECUERDOS", type:"extra", text:"¿Has vivido algo en una sauna que nunca le hayas contado a nadie?", hint:"Comparte solo aquello con lo que te sientas cómodo."},
+    {section:"EL RITUAL", type:"core", text:"¿Crees que hay algo casi ritual en el hecho de ir a una sauna?", hint:"Piensa en las rutinas, la repetición, la anticipación o la sensación de entrar en otro mundo."},
+    {section:"EL RITUAL", type:"extra", text:"¿Qué crees que busca la gente cuando entra en una sauna?", hint:"Puede que no coincida con lo que dicen que buscan."},
+    {section:"LAS ÚLTIMAS PALABRAS", type:"core", text:"¿Qué le dirías a alguien que nunca ha ido a una sauna y se prepara para su primera visita?", hint:"Imagina que hablas con un amigo antes de su primera vez."},
+    {section:"LAS ÚLTIMAS PALABRAS", type:"extra", text:"Describe una sauna en tres palabras.", hint:"Las primeras palabras que te vengan a la cabeza sirven."},
+    {section:"LAS ÚLTIMAS PALABRAS", type:"extra", text:"¿Crees que las saunas están desapareciendo o que todavía ofrecen algo que necesitamos?", hint:"¿Qué podríamos perder si estos espacios desaparecieran?"},
+    {section:"LAS ÚLTIMAS PALABRAS", type:"extra", text:"¿Hay algo que no te haya preguntado y que te gustaría confesar?", hint:"Este es tu espacio. Puedes llevar la conversación a otro lugar."}
   ] };
 
-const copy = { en: {
-    back:"← BACK TO THE ENTRANCE",stepAbout:"ABOUT",stepRelease:"RELEASE",stepConfession:"CONFESSION",stepSubmit:"SUBMIT",stepBack:"BACK",stepNext:"CONTINUE",guiltIntro:"Throughout history, the Church has often approached desire and sexuality through the language of sin and guilt. This project borrows the ritual of confession as a way to question the shame we may have been taught to carry. This is not a religious confession or a place of judgement. It is simply a space to speak freely, in your own words.",windowTitle:"Sunday At Church — The Confessional",eyebrow:"PHASE 01 / THE CONFESSIONAL",confTitle:"Welcome to the Confessional.",confIntro:"A place to leave a thought, a memory or a confession about sauna culture. You don't need to be a regular. You just need a story.",
-    phaseOneTitle:"The Confessional",phaseOneText:"An open collection of personal testimonies, memories and perspectives. This first phase is about listening to as many different voices as possible.",phaseOneTag:"YOU ARE HERE",phaseTwoTitle:"The Conversation",phaseTwoText:"Some contributors may later be invited to a more in-depth, one-to-one filmed interview. Taking part now does not guarantee an invitation.",phaseTwoTag:"A POSSIBLE NEXT STEP",introNote:"The first phase is not a casting call. Your testimony matters on its own.",
-    releaseWindowTitle:"01 — Participation & release",beforeBegin:"BEFORE YOU BEGIN",releaseTitle:"A quick formality.",releaseIntro:"Please complete the participation release through Adobe Sign before recording. Use the same legal name and email address in both places so the filmmaker can match them manually.",adobeTitle:"Sign your participation release",adobeIntro:"Choose the form in your preferred language. Adobe will send you a copy when the agreement is completed.",adobeCheck:"I have completed the Adobe Sign release.",adobeNote:"This checkbox is a declaration, not automatic proof of signature. Every submission remains pending until the filmmaker manually checks the signed PDF and the footage.",
-    legalName:"Full legal name",legalNamePlaceholder:"Your legal name",email:"Email address",emailPlaceholder:"you@example.com",preferredPlaceholder:"Name to appear in the credits",dob:"Date of birth",creditChoice:"How would you like to be credited?",creditFull:"Use my full name",creditPreferred:"Use a preferred name",creditNone:"Do not credit me",preferredName:"Preferred credit name",agree:"I confirm that I am 18 or older, participation is voluntary, and I have read the participation and privacy information.",
-    recorderWindowTitle:"02 — Your confession",recordEyebrow:"YOUR TESTIMONY",recordTitle:"Whenever you're ready.",recordIntro:"Start with the opening confession. The ten core prompts are the shared thread; the extra questions are there if you feel like saying more. Skip anything you don't want to answer.",openingLabel:"THE OPENING CONFESSION",openingPrompt:"“Forgive me, Father, for I've sinned. The last time I went to a sauna was…”",openingSub:"It could have been yesterday, a few months ago, or five years ago. It might have been your first and last time.",questionBankLabel:"QUESTION BANK",filterAll:"ALL",filterCore:"CORE",filterExtra:"EXTRA",coreType:"CORE QUESTION",extraType:"OPTIONAL QUESTION",hintDefault:"There is no right or wrong answer.",enableCamera:"ENABLE CAMERA",startRecording:"START RECORDING",stopRecording:"STOP",previous:"← PREVIOUS",next:"NEXT →",skipQuestion:"SKIP THIS QUESTION",recording:"Recording…",saved:"Answer saved in this browser session.",cameraReady:"Camera and microphone ready.",cameraError:"Could not access camera or microphone. Check browser permissions.",recordNotice:"Camera access requires HTTPS or localhost.",uploadEyebrow:"03 / SEND YOUR CONFESSION",uploadTitle:"Ready to send?",uploadIntro:"You can submit any recorded answers. Your participation will remain pending until the filmmaker manually verifies both your Adobe release and the uploaded footage.",submitAnswers:"SUBMIT ANSWERS",noClips:"Record at least one answer before submitting.",needRelease:"Please confirm that you have completed the Adobe Sign release.",needDetails:"Please complete your name, email, date of birth and participation declaration.",adultOnly:"You must be 18 or older to participate.",needPreferred:"Please enter the name you want used in the credits.",needTurnstile:"Complete the security verification.",sending:"Sending your answers securely…",received:"Submission received. Your reference is: ",failed:"Submission failed. Please try again later.",serviceOff:"The submission service is currently unavailable.",connectionError:"Could not connect to the server. Your clips remain in this browser session.",goToSubmit:"GO TO SUBMIT",closingNote:"Thank you for trusting us with your story. You can leave a question unanswered; silence is also an answer.",footerText:"THE CONFESSIONAL · PHASE 01"
-  }
-};
+const copy = { es: {
+    back:"← VOLVER A LA ENTRADA",
+    stepAbout:"INICIO",
+    stepRelease:"CONSENTIMIENTO",
+    stepConfession:"CONFESIÓN",
+    stepSubmit:"ENVIAR",
+    stepBack:"VOLVER",
+    stepNext:"CONTINUAR",
+    guiltIntro:"A lo largo de la historia, la Iglesia ha abordado a menudo el deseo y la sexualidad a través del lenguaje del pecado y la culpa. Este proyecto toma prestado el ritual de la confesión para cuestionar la vergüenza que quizá nos han enseñado a cargar. Esto no es una confesión religiosa ni un espacio de juicio. Es, sencillamente, un lugar para hablar con libertad y con tus propias palabras.",
+    windowTitle:"Sunday At Church — El Confesionario",
+    eyebrow:"FASE 01 / EL CONFESIONARIO",
+    confTitle:"Te damos la bienvenida al Confesionario.",
+    confIntro:"Un espacio para compartir una idea, un recuerdo o una confesión sobre la cultura de las saunas. No hace falta que seas asiduo. Solo que tengas una historia.",
+    phaseOneTitle:"El Confesionario",
+    phaseOneText:"Una colección abierta de testimonios personales, recuerdos y puntos de vista. En esta primera fase queremos escuchar tantas voces diferentes como sea posible.",
+    phaseOneTag:"ESTÁS AQUÍ",
+    phaseTwoTitle:"La Conversación",
+    phaseTwoText:"Más adelante, algunas personas participantes podrían recibir una invitación para una entrevista individual filmada y más profunda. Participar ahora no garantiza una invitación.",
+    phaseTwoTag:"UN POSIBLE SIGUIENTE PASO",
+    introNote:"Esta primera fase no es un proceso de casting. Tu testimonio tiene valor por sí mismo.",
+    releaseWindowTitle:"01 — Participación y autorización",
+    beforeBegin:"ANTES DE EMPEZAR",
+    releaseTitle:"Un trámite necesario.",
+    releaseIntro:"Antes de grabar, completa la autorización de participación a través de Adobe Sign. Utiliza el mismo nombre legal y la misma dirección de correo electrónico en ambos formularios para que el cineasta pueda relacionarlos manualmente.",
+    adobeTitle:"Firma la autorización de participación",
+    adobeIntro:"Completa la autorización de participación en castellano. Cuando hayas terminado, Adobe te enviará una copia del documento firmado.",
+    adobeCheck:"He completado la autorización de Adobe Sign.",
+    adobeNote:"Esta casilla es una declaración, no una verificación automática de la firma. Todas las participaciones quedan pendientes hasta que el cineasta compruebe manualmente el PDF firmado y los vídeos recibidos.",
+    legalName:"Nombre y apellidos (nombre legal)",
+    legalNamePlaceholder:"Tu nombre legal",
+    email:"Correo electrónico",
+    emailPlaceholder:"tu@correo.com",
+    preferredPlaceholder:"Nombre que quieres utilizar en los créditos",
+    dob:"Fecha de nacimiento",
+    creditChoice:"¿Cómo quieres aparecer en los créditos?",
+    creditFull:"Utilizar mi nombre completo",
+    creditPreferred:"Utilizar un nombre elegido",
+    creditNone:"No incluir mi nombre",
+    preferredName:"Nombre para los créditos",
+    agree:"Confirmo que tengo 18 años o más, que mi participación es voluntaria y que he leído la información sobre participación y privacidad.",
+    recorderWindowTitle:"02 — Tu confesión",
+    recordEyebrow:"TU TESTIMONIO",
+    recordTitle:"Cuando quieras.",
+    recordIntro:"Empieza con la confesión inicial. Las diez preguntas principales forman un hilo común; las preguntas opcionales están ahí por si quieres contar algo más. Puedes saltarte cualquiera que no quieras responder.",
+    openingLabel:"LA CONFESIÓN INICIAL",
+    openingPrompt:"«Ave María Purísima. La última vez que fui a una sauna fue…»",
+    openingSub:"Pudo ser ayer, hace unos meses o hace cinco años. Quizá fue tu primera y última vez.",
+    questionBankLabel:"BANCO DE PREGUNTAS",
+    filterAll:"TODAS",
+    filterCore:"PRINCIPALES",
+    filterExtra:"OPCIONALES",
+    coreType:"PREGUNTA PRINCIPAL",
+    extraType:"PREGUNTA OPCIONAL",
+    hintDefault:"No hay respuestas correctas ni incorrectas.",
+    enableCamera:"ACTIVAR CÁMARA",
+    startRecording:"EMPEZAR A GRABAR",
+    stopRecording:"DETENER",
+    previous:"← ANTERIOR",
+    next:"SIGUIENTE →",
+    skipQuestion:"SALTAR PREGUNTA",
+    recording:"Grabando…",
+    saved:"Respuesta guardada en esta sesión del navegador.",
+    cameraReady:"Cámara y micrófono preparados.",
+    cameraError:"No se ha podido acceder a la cámara o al micrófono. Comprueba los permisos del navegador.",
+    recordNotice:"Para acceder a la cámara es necesario utilizar HTTPS o localhost.",
+    uploadEyebrow:"03 / ENVIAR TU CONFESIÓN",
+    uploadTitle:"¿Todo listo para enviar?",
+    uploadIntro:"Puedes enviar cualquiera de las respuestas grabadas. Tu participación quedará pendiente hasta que el cineasta compruebe manualmente tanto la autorización de Adobe como los vídeos recibidos.",
+    submitAnswers:"ENVIAR RESPUESTAS",
+    noClips:"Graba al menos una respuesta antes de enviar.",
+    needRelease:"Confirma que has completado la autorización de Adobe Sign.",
+    needDetails:"Completa tu nombre, correo electrónico, fecha de nacimiento y la declaración de participación.",
+    adultOnly:"Para participar debes tener 18 años o más.",
+    needPreferred:"Indica el nombre que quieres utilizar en los créditos.",
+    needTurnstile:"Completa la verificación de seguridad.",
+    sending:"Enviando tus respuestas de forma segura…",
+    received:"Hemos recibido tu envío. Tu referencia es: ",
+    failed:"No se ha podido enviar. Inténtalo de nuevo más tarde.",
+    serviceOff:"El servicio de envío no está disponible en este momento.",
+    connectionError:"No se ha podido conectar con el servidor. Tus vídeos siguen en esta sesión del navegador.",
+    goToSubmit:"IR A ENVIAR",
+    closingNote:"Gracias por confiar en nosotros y compartir tu historia. Puedes dejar preguntas sin responder; el silencio también es una respuesta.",
+    footerText:"EL CONFESIONARIO · FASE 01"
+  } };
 
-const lang = "en";
+const lang = "es";
 let currentIndex = 0, stream = null, recorder = null, chunks = [], clips = {};
 let turnstileToken = "", turnstileWidgetId = null, activeFilter = "all";
 
@@ -112,7 +188,7 @@ function renderQuestion(){
   const existing=clips[currentIndex];
   $("downloads").innerHTML="";
   if(existing){
-    const a=document.createElement("a");a.href=URL.createObjectURL(existing);a.download=`sunday-at-church-question-${String(currentIndex+1).padStart(2,"0")}.webm`;a.textContent=`DOWNLOAD ANSWER ${currentIndex+1} ↓`;$("downloads").appendChild(a);
+    const a=document.createElement("a");a.href=URL.createObjectURL(existing);a.download=`sunday-at-church-question-${String(currentIndex+1).padStart(2,"0")}.webm`;a.textContent=`DESCARGAR RESPUESTA ${currentIndex+1} ↓`;$("downloads").appendChild(a);
     setStatus(t("saved"));
   }else setStatus("");
 }
@@ -120,8 +196,8 @@ function applyLanguage(){
   document.documentElement.lang=lang;
   document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(copy[lang][key])el.textContent=copy[lang][key];});
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{const key=el.dataset.i18nPlaceholder;if(copy[lang][key])el.placeholder=copy[lang][key];});
-  $("adobeFormEn").hidden=false;
-  $("releaseCopy").innerHTML = `<h3>Permission to record and use your contribution</h3><p>I give the production of <em>Sunday At Church</em> permission to record my image, voice and answers through this online Confessional, and to consider my contribution for inclusion in the documentary.</p><h3>Use of the documentary</h3><p>The intended uses may include educational screenings, film festivals, cinemas, cultural exhibitions, television, streaming, online distribution and promotional materials. My contribution may be edited, shortened, rearranged or subtitled, but should not knowingly be used in a materially misleading context.</p><h3>Voluntary participation and privacy</h3><p>My participation is voluntary and unpaid. I understand that the project explores intimacy, sexuality and queer community, and that appearing in it may reveal information about me. Any anonymity or credit restrictions should be agreed before recording. I may ask questions before participating.</p><h3>Privacy information</h3><p>Please read the separate privacy notice before submitting. You may contact <a href="mailto:hi@javierbotellaperez.com">hi@javierbotellaperez.com</a> with questions about this project or your information.</p>`;
+  $("adobeFormEs").hidden=false;
+  $("releaseCopy").innerHTML = `<h3>Permiso para grabar y utilizar tu participación</h3><p>Autorizo a la producción de <em>Sunday At Church</em> a grabar mi imagen, mi voz y mis respuestas a través de este Confesionario en línea, y a valorar la inclusión de mi participación en el documental.</p><h3>Usos del documental</h3><p>Los usos previstos pueden incluir proyecciones educativas, festivales de cine, salas de cine, exposiciones culturales, televisión, plataformas de streaming, distribución en línea y materiales promocionales. Mi participación podrá editarse, acortarse, reordenarse o subtitularse, pero no deberá utilizarse deliberadamente en un contexto que distorsione sustancialmente su sentido.</p><h3>Participación voluntaria y privacidad</h3><p>Mi participación es voluntaria y no remunerada. Entiendo que el proyecto explora la intimidad, la sexualidad y la comunidad queer, y que aparecer en él puede revelar información sobre mí. Cualquier condición relativa al anonimato o a los créditos deberá acordarse antes de grabar. Puedo plantear mis dudas antes de participar.</p><h3>Información sobre privacidad</h3><p>Lee el aviso de privacidad independiente antes de enviar tu participación. Puedes escribir a <a href="mailto:hi@javierbotellaperez.com">hi@javierbotellaperez.com</a> si tienes preguntas sobre el proyecto o sobre tus datos.</p>`;
   renderQuestion();
 }
 document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{activeFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));const indexes=visibleQuestionIndexes();if(!indexes.includes(currentIndex))currentIndex=indexes[0]??0;renderQuestion();}));
@@ -134,8 +210,8 @@ window.onTurnstileLoad=function(){
   if(!window.turnstile||turnstileWidgetId!==null)return;
   turnstileWidgetId=window.turnstile.render("#turnstileWidget",{sitekey:TURNSTILE_SITE_KEY,
     callback:token=>{turnstileToken=token;refreshSubmitState();setUploadStatus("");},
-    "expired-callback":()=>{turnstileToken="";refreshSubmitState();setUploadStatus("Verification expired. Please verify again.");},
-    "error-callback":()=>{turnstileToken="";refreshSubmitState();setUploadStatus("Verification could not be completed.");}
+    "expired-callback":()=>{turnstileToken="";refreshSubmitState();setUploadStatus("La verificación ha caducado. Vuelve a verificarte.");},
+    "error-callback":()=>{turnstileToken="";refreshSubmitState();setUploadStatus("No se ha podido completar la verificación.");}
   });
 };
 function refreshSubmitState(){const hasClips=Object.keys(clips).length>0;$("submitBtn").disabled=!(hasClips&&turnstileToken);}

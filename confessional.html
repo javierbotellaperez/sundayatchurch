@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#17263b">
-  <title>The Confessional — Sunday At Church</title>
+  <title>El Confesionario — Sunday At Church</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="confessional.js"></script>
   <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
@@ -15,54 +15,63 @@
 </header>
 
 <main class="confessional">
-  <nav class="stepper" aria-label="Participation steps">
-    <button type="button" class="step-link active" data-step="0"><span>01</span><b data-i18n="stepAbout">ABOUT</b></button>
-    <button type="button" class="step-link" data-step="1"><span>02</span><b data-i18n="stepRelease">RELEASE</b></button>
-    <button type="button" class="step-link" data-step="2"><span>03</span><b data-i18n="stepConfession">CONFESSION</b></button>
-    <button type="button" class="step-link" data-step="3"><span>04</span><b data-i18n="stepSubmit">SUBMIT</b></button>
+  <nav class="stepper" aria-label="Pasos para participar">
+    <button type="button" class="step-link active" data-step="0"><span>01</span><b data-i18n="stepAbout">INICIO</b></button>
+    <button type="button" class="step-link" data-step="1"><span>02</span><b data-i18n="stepRelease">CONSENTIMIENTO</b></button>
+    <button type="button" class="step-link" data-step="2"><span>03</span><b data-i18n="stepConfession">CONFESIÓN</b></button>
+    <button type="button" class="step-link" data-step="3"><span>04</span><b data-i18n="stepSubmit">ENVIAR</b></button>
   </nav>
   <div class="step-progress"><span id="stepProgress"></span></div>
-  <a class="back" href="index.html" data-i18n="back">← BACK TO SUNDAY AT CHURCH</a>
+  <a class="back" href="index.html" data-i18n="back">← VOLVER A SUNDAY AT CHURCH</a>
 
   <section class="intro-window step-panel active" data-panel="0">
     
     <div class="window-content">
-      <p class="eyebrow" data-i18n="eyebrow">SUNDAY AT CHURCH / PHASE 01</p>
-      <h1 data-i18n="confTitle">Welcome to the Confessional.</h1>
-      <p class="intro" data-i18n="confIntro">A place to leave a thought, a memory or a confession about sauna culture. You don't need to be a regular. You just need a story.</p>
+      <p class="eyebrow" data-i18n="eyebrow">SUNDAY AT CHURCH / FASE 01</p>
+      <h1 data-i18n="confTitle">Te damos la bienvenida al Confesionario.</h1>
+      <p class="intro" data-i18n="confIntro">Un espacio para compartir una idea, un recuerdo o una confesión sobre la cultura de las saunas. No hace falta que seas asiduo. Solo que tengas una historia.</p>
       <div class="guilt-intro">
-        <p data-i18n="guiltIntro">Throughout history, the Church has often approached desire and sexuality through the language of sin and guilt. This project borrows the ritual of confession as a way to question the shame we may have been taught to carry. This is not a religious confession or a place of judgement. It is simply a space to speak freely, in your own words.</p>
+        <p data-i18n="guiltIntro">A lo largo de la historia, la Iglesia ha abordado a menudo el deseo y la sexualidad a través del lenguaje del pecado y la culpa. Este proyecto toma prestado el ritual de la confesión para cuestionar la vergüenza que quizá nos han enseñado a cargar. Esto no es una confesión religiosa ni un espacio de juicio. Es, sencillamente, un lugar para hablar con libertad y con tus propias palabras.</p>
       </div>
       <div class="phase-grid">
         <article class="phase-card active-phase">
           <span class="phase-number">01</span>
-          <h2 data-i18n="phaseOneTitle">The Confessional</h2>
-          <p data-i18n="phaseOneText">An open collection of personal testimonies, memories and perspectives. This first phase is about listening to as many different voices as possible.</p>
-          <small data-i18n="phaseOneTag">YOU ARE HERE</small>
+          <h2 data-i18n="phaseOneTitle">El Confesionario</h2>
+          <p data-i18n="phaseOneText">Una colección abierta de testimonios personales, recuerdos y puntos de vista. En esta primera fase queremos escuchar tantas voces diferentes como sea posible.</p>
+          <small data-i18n="phaseOneTag">ESTÁS AQUÍ</small>
         </article>
         <article class="phase-card">
           <span class="phase-number">02</span>
-          <h2 data-i18n="phaseTwoTitle">The Conversation</h2>
-          <p data-i18n="phaseTwoText">Some contributors may later be invited to a more in-depth, one-to-one filmed interview. Taking part now does not guarantee an invitation.</p>
-          <small data-i18n="phaseTwoTag">A POSSIBLE NEXT STEP</small>
+          <h2 data-i18n="phaseTwoTitle">La Conversación</h2>
+          <p data-i18n="phaseTwoText">Más adelante, algunas personas participantes podrían recibir una invitación para una entrevista individual filmada y más profunda. Participar ahora no garantiza una invitación.</p>
+          <small data-i18n="phaseTwoTag">UN POSIBLE SIGUIENTE PASO</small>
         </article>
       </div>
-      <p class="intro-note" data-i18n="introNote">The first phase is not a casting call. Your testimony matters on its own.</p>
+      <p class="intro-note" data-i18n="introNote">Esta primera fase no es un proceso de casting. Tu testimonio tiene valor por sí mismo.</p>
     </div>
   </section>
 
   <section class="release-window step-panel" data-panel="1" hidden>
     
     <div class="window-content">
-      <p class="eyebrow" data-i18n="beforeBegin">BEFORE YOU BEGIN</p>
-      <h2 data-i18n="releaseTitle">A quick formality.</h2>
-      <p data-i18n="releaseIntro">Please complete the participation release through Adobe Sign before recording. Use the same legal name and email address in both places so the filmmaker can match them manually.</p>
+      <p class="eyebrow" data-i18n="beforeBegin">ANTES DE EMPEZAR</p>
+      <h2 data-i18n="releaseTitle">Un trámite necesario.</h2>
+      <p data-i18n="releaseIntro">Antes de grabar, completa la autorización de participación a través de Adobe Sign. Utiliza el mismo nombre legal y la misma dirección de correo electrónico en ambos formularios para que el cineasta pueda relacionarlos manualmente.</p>
       <div class="release-copy" id="releaseCopy"></div>
+      <div class="form-grid">
+        <label>Nombre y apellidos (nombre legal)<input id="legalName" autocomplete="name" required></label>
+        <label>Correo electrónico<input id="email" type="email" autocomplete="email" required></label>
+        <label>Fecha de nacimiento<input id="dob" type="date" required></label>
+        <label>¿Cómo quieres aparecer en los créditos?<select id="credit"><option value="full">Nombre completo</option><option value="preferred">Nombre elegido</option><option value="none">Sin créditos</option></select></label>
+        <label id="preferredWrap" hidden>Nombre para los créditos<input id="preferredName"></label>
+      </div>
+      <label class="check"><input id="adobeReleaseCompleted" type="checkbox"> He completado y firmado la autorización de participación en Adobe Sign.</label>
+      <label class="check"><input id="agree" type="checkbox"> Confirmo que tengo 18 años o más, que mi participación es voluntaria y que he leído la información sobre participación y privacidad.</label>
       <div class="adobe-sign-block">
-        <h3 data-i18n="adobeTitle">Sign your participation release</h3>
-        <p data-i18n="adobeIntro">Complete the English participation release. Adobe will send you a copy when the agreement is completed.</p>
-        <div id="adobeFormEn" class="adobe-form" data-lang-form="en">
-          <iframe title="Sunday At Church participant release — English" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB7z-7_HGe2MS1gt41TlPL5qqeCvEotEmMNE-I-Is54eKC5l6pQmsf1rJW3OZ9NBVU*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
+        <h3 data-i18n="adobeTitle">Firma la autorización de participación</h3>
+        <p data-i18n="adobeIntro">Completa la autorización de participación en castellano. Cuando hayas terminado, Adobe te enviará una copia del documento firmado.</p>
+        <div id="adobeFormEs" class="adobe-form" data-lang-form="es">
+          <iframe title="Autorización de participación de Sunday At Church — castellano" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhC5vn8Sls1-_F9MpFa28FiN_h7VEQQY2_unzSyUgNzD8aCA7pNbcwqhWcqJR42zFLs*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
         </div>
       </div>
     </div>
@@ -70,49 +79,61 @@
 
   <section class="recorder-window step-panel" data-panel="2" hidden>
     <div class="window-content">
-      <p class="eyebrow" data-i18n="recordEyebrow">YOUR TESTIMONY</p>
-      <h2 data-i18n="recordTitle">Whenever you're ready.</h2>
-      <p class="intro" data-i18n="recordIntro">Begin with the opening confession. The ten core prompts form a shared thread; optional questions are there if you would like to say more. Skip anything you do not want to answer.</p>
+      <p class="eyebrow" data-i18n="recordEyebrow">TU TESTIMONIO</p>
+      <h2 data-i18n="recordTitle">Cuando quieras.</h2>
+      <p class="intro" data-i18n="recordIntro">Empieza con la confesión inicial. Las diez preguntas principales forman un hilo común; las preguntas opcionales están ahí por si quieres contar algo más. Puedes saltarte cualquiera que no quieras responder.</p>
+      <div class="confession-framing">
+        <p class="eyebrow">UNA CONFESIÓN SIN JUICIOS</p>
+        <p>Aquí, confesar no significa admitir una falta. Tomamos prestado su lenguaje para abrir un espacio a todo aquello sobre lo que nos han enseñado a guardar silencio: el deseo, el placer, la vergüenza, la ternura, la memoria y todo lo que hay entre medias. No hay penitencia que cumplir ni respuestas correctas. Comparte únicamente aquello que quieras contar.</p>
+      </div>
+      <div class="question-toolbar">
+        <div><p class="eyebrow">LAS PREGUNTAS</p><p id="questionCount">01 / 20</p></div>
+        <div class="question-filter" aria-label="Filtrar preguntas">
+          <button type="button" class="filter-btn active" data-filter="all">TODAS</button>
+          <button type="button" class="filter-btn" data-filter="core">PRINCIPALES</button>
+          <button type="button" class="filter-btn" data-filter="extra">OPCIONALES</button>
+        </div>
+      </div>
       <div class="question-card">
-        <div class="question-meta"><span id="questionSection">01 / THE FIRST TIME</span><span id="questionType">CORE QUESTION</span></div>
-        <h3 id="question">What did you expect to find the first time you went to a sauna?</h3>
-        <p id="questionHint" class="question-hint">There is no right or wrong answer.</p>
+        <div class="question-meta"><span id="questionSection">01 / LA CONFESIÓN</span><span id="questionType">PREGUNTA PRINCIPAL</span></div>
+        <h3 id="question">Ave María Purísima. La última vez que fui a una sauna fue…</h3>
+        <p id="questionHint" class="question-hint">Di cuánto tiempo ha pasado. Puede haber sido ayer, hace cinco años o tu primera y última visita.</p>
         <div class="record-controls">
           <video id="preview" autoplay muted playsinline></video>
           <div class="controls">
-            <button id="cameraBtn" class="xp-button secondary" type="button" data-i18n="enableCamera">ENABLE CAMERA</button>
-            <button id="recordBtn" class="xp-button" type="button" disabled data-i18n="startRecording">START RECORDING</button>
-            <button id="stopBtn" class="xp-button secondary" type="button" disabled data-i18n="stopRecording">STOP</button>
+            <button id="cameraBtn" class="xp-button secondary" type="button" data-i18n="enableCamera">ACTIVAR CÁMARA</button>
+            <button id="recordBtn" class="xp-button" type="button" disabled data-i18n="startRecording">EMPEZAR A GRABAR</button>
+            <button id="stopBtn" class="xp-button secondary" type="button" disabled data-i18n="stopRecording">DETENER</button>
           </div>
           <p id="status" class="small-note" aria-live="polite"></p>
           <div id="downloads" class="downloads"></div>
         </div>
       </div>
       <div class="question-navigation">
-        <button id="prevBtn" class="xp-button secondary" type="button" data-i18n="previous">← PREVIOUS</button>
-        <button id="skipBtn" class="xp-button secondary" type="button" data-i18n="skipQuestion">SKIP THIS QUESTION</button>
-        <button id="nextBtn" class="xp-button" type="button" data-i18n="next">NEXT →</button>
+        <button id="prevBtn" class="xp-button secondary" type="button" data-i18n="previous">← ANTERIOR</button>
+        <button id="skipBtn" class="xp-button secondary" type="button" data-i18n="skipQuestion">SALTAR PREGUNTA</button>
+        <button id="nextBtn" class="xp-button" type="button" data-i18n="next">SIGUIENTE →</button>
       </div>
     </div>
   </section>
   <section class="upload-panel step-panel" data-panel="3" hidden>
     <div class="window-content">
       <div class="upload-area">
-        <p class="eyebrow" data-i18n="uploadEyebrow">04 / FINAL STEP</p>
-        <h3 data-i18n="uploadTitle">Ready to send?</h3>
-        <p data-i18n="uploadIntro">You can submit any recorded answers. Your participation will remain pending until the filmmaker manually verifies both your Adobe release and the uploaded footage.</p>
-        <div id="turnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
-        <button id="submitBtn" class="xp-button" type="button" disabled data-i18n="submitAnswers">SUBMIT ANSWERS</button>
+        <p class="eyebrow" data-i18n="uploadEyebrow">04 / ÚLTIMO PASO</p>
+        <h3 data-i18n="uploadTitle">¿Todo listo para enviar?</h3>
+        <p data-i18n="uploadIntro">Puedes enviar las respuestas que hayas grabado. Tu participación quedará pendiente hasta que el cineasta compruebe manualmente tanto la autorización firmada en Adobe como los vídeos recibidos.</p>
+        <div id="turnstileWidget" class="turnstile-widget" aria-label="Verificación de seguridad"></div>
+        <button id="submitBtn" class="xp-button" type="button" disabled data-i18n="submitAnswers">ENVIAR RESPUESTAS</button>
         <p id="uploadStatus" class="small-note" aria-live="polite"></p>
       </div>
     </div>
   </section>
   <div class="step-actions">
-    <button type="button" id="stepBack" class="xp-button secondary" data-i18n="stepBack">BACK</button>
-    <button type="button" id="stepNext" class="xp-button" data-i18n="stepNext">CONTINUE</button>
+    <button type="button" id="stepBack" class="xp-button secondary" data-i18n="stepBack">VOLVER</button>
+    <button type="button" id="stepNext" class="xp-button" data-i18n="stepNext">CONTINUAR</button>
   </div>
-  <p class="closing-note" data-i18n="closingNote">Thank you for trusting us with your story. You can leave a question unanswered; silence is also an answer.</p>
+  <p class="closing-note" data-i18n="closingNote">Gracias por confiar en nosotros y compartir tu historia. Puedes dejar preguntas sin responder; el silencio también es una respuesta.</p>
 </main>
-<footer><span>SUNDAY AT CHURCH</span><span data-i18n="footerText">THE CONFESSIONAL · PHASE 01</span></footer>
+<footer><span>SUNDAY AT CHURCH</span><span data-i18n="footerText">EL CONFESIONARIO · FASE 01</span></footer>
 </body>
 </html>
