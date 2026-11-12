@@ -65,3 +65,69 @@ input:focus,select:focus{outline:2px solid #9d7958;outline-offset:1px}
 .closing-note{color:#e8dfd1;font-size:19px}
 footer{border-top:1px solid #ffffff25;color:#d7d0c4}
 @media(max-width:650px){.confessional{width:94vw;margin-top:4vh}.window-content{padding:22px 18px}.guilt-intro{padding:15px 17px}.guilt-intro p{font-size:15px}.phase-grid{gap:10px}}
+
+/* Minimal editorial direction: quiet, legible, no faux operating-system chrome */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--paper:#f5f3ee;--panel:#fff;--ink:#202a35;--muted:#626a70;--accent:#8b6849;--rule:#dedbd4;--navy:#172b3c}
+html,body{background:var(--paper);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;font-style:normal}
+body{background:var(--paper)}
+.topbar{background:var(--navy);padding:22px max(6vw,24px);border:0}
+.wordmark{font:700 12px 'DM Sans',Arial,sans-serif;letter-spacing:.18em;color:#fff}
+.wordmark span{color:#c9a982}
+.language button{font:600 11px 'DM Sans',Arial,sans-serif;border:1px solid #70808c;color:#fff;background:transparent;border-radius:2px;box-shadow:none}
+.language button.active{background:#c9a982;color:#172b3c;border-color:#c9a982}
+.confessional{width:min(820px,90vw);margin:58px auto 90px}
+.back{color:#6b706f;font:600 10px 'DM Sans',Arial,sans-serif;letter-spacing:.12em;margin-bottom:24px}
+.xp-window{background:var(--panel);border:1px solid var(--rule);box-shadow:none;margin:22px 0 30px}
+.xp-titlebar{background:transparent;color:#6e746f;border-bottom:1px solid var(--rule);padding:15px clamp(22px,4vw,42px);font:600 10px 'DM Sans',Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+.window-controls{display:none}
+.window-content{padding:clamp(25px,5vw,48px)}
+.eyebrow,.small-note,.prompt-label,footer{font-family:'DM Sans',Arial,sans-serif;font-style:normal;font-weight:600;letter-spacing:.13em}
+.eyebrow{color:var(--accent);font-size:10px}
+.intro-window h1,.window-content>h2,.phase-card h2,.release-copy h3,.adobe-sign-block h3,.upload-area h3,.question-card h3{font-family:'DM Sans',Arial,sans-serif;font-style:normal;letter-spacing:-.035em;color:var(--ink)}
+.intro-window h1{font-size:clamp(34px,5vw,54px);line-height:1.08;font-weight:600;margin:16px 0 18px}
+.window-content>h2{font-size:clamp(27px,4vw,36px);font-weight:600}
+.intro{font-size:15px;line-height:1.85;color:#525b60}
+.guilt-intro{max-width:690px;margin:34px 0 26px;padding:0 0 0 20px;border:0;border-left:2px solid #b18b66;background:transparent}
+.guilt-intro p{margin:0;color:#50585c;font:400 15px/1.85 'DM Sans',Arial,sans-serif;font-style:normal}
+.phase-grid{gap:14px;margin:32px 0 20px}
+.phase-card{background:#faf9f6;border:1px solid var(--rule);padding:22px}
+.phase-card.active-phase{border:1px solid #b18b66;box-shadow:none}
+.phase-number,.phase-card small{font:600 10px 'DM Sans',Arial,sans-serif;color:var(--accent);letter-spacing:.12em}
+.phase-card h2{font-size:19px;font-weight:600;margin:12px 0 8px}
+.phase-card p,.intro-note{font:400 13px/1.8 'DM Sans',Arial,sans-serif;color:#60686b;font-style:normal}
+.release-copy{border-block:1px solid var(--rule);color:#50585c;font:400 13px/1.8 'DM Sans',Arial,sans-serif}
+.release-copy h3{font-size:17px;font-weight:600}
+.adobe-sign-block{background:#f7f6f2;border:1px solid var(--rule);padding:clamp(16px,3vw,24px)}
+.adobe-sign-block h3{font-size:20px;font-weight:600}
+.adobe-sign-block p{font:400 13px/1.75 'DM Sans',Arial,sans-serif;color:#596166}
+.form-grid label,.release-window label:not(.check){font:500 13px 'DM Sans',Arial,sans-serif;color:#343d43}
+input,select{font:400 14px 'DM Sans',Arial,sans-serif;border:1px solid #d2d0ca;border-radius:2px;box-shadow:none;background:#fff;padding:13px;color:var(--ink)}
+.check{font:400 13px/1.7 'DM Sans',Arial,sans-serif;color:#4f585d}
+.small-note{font-size:10px;line-height:1.75;color:#6b7274;letter-spacing:.025em}
+.opening-confession{background:#f7f6f2;border:1px solid var(--rule);border-left:3px solid #b18b66;padding:clamp(20px,4vw,32px);margin:28px 0 34px;box-shadow:none}
+.opening-confession .prompt-label{color:var(--accent)}
+.opening-confession p{font:600 clamp(22px,3.5vw,30px)/1.4 'DM Sans',Arial,sans-serif;font-style:normal;letter-spacing:-.025em;color:var(--ink);margin:14px 0}
+.opening-confession small{font:400 12px/1.8 'DM Sans',Arial,sans-serif;color:#626a70}
+.question-toolbar{margin:36px 0 15px}
+.question-toolbar p{font:600 13px 'DM Sans',Arial,sans-serif;color:var(--ink)}
+.filter-btn{font:600 10px 'DM Sans',Arial,sans-serif;letter-spacing:.08em;border:1px solid #d2d0ca;border-radius:2px;background:transparent;color:#596166;padding:9px 13px}
+.filter-btn.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.question-card{background:#fff;border:1px solid var(--rule);padding:clamp(20px,4vw,34px);box-shadow:none}
+.question-meta{font:600 10px 'DM Sans',Arial,sans-serif;color:var(--accent);letter-spacing:.1em}
+.question-card h3{font-size:clamp(23px,3.7vw,32px);line-height:1.35;font-weight:600}
+.question-hint{font:400 13px/1.75 'DM Sans',Arial,sans-serif;color:#687176}
+.record-controls video{border:1px solid #d2d0ca;background:#111}
+.xp-button{font:600 10px 'DM Sans',Arial,sans-serif;letter-spacing:.08em;border:1px solid var(--navy);border-radius:2px;background:var(--navy);color:#fff;padding:13px 17px;box-shadow:none}
+.xp-button:hover:not(:disabled){background:#29465d;border-color:#29465d}
+.xp-button.secondary{background:transparent;border:1px solid #c9c6be;color:#3c454a;box-shadow:none}
+.xp-button.secondary:hover:not(:disabled){background:#f2f0eb}
+.upload-area{border-top:1px solid var(--rule)}
+.upload-area>p:not(.eyebrow){font:400 13px/1.8 'DM Sans',Arial,sans-serif;color:#596166}
+.upload-area h3{font-size:25px;font-weight:600}
+.downloads a{font:600 11px 'DM Sans',Arial,sans-serif;color:var(--accent)}
+.closing-note{font:500 14px/1.8 'DM Sans',Arial,sans-serif;font-style:normal;color:#697176}
+footer{background:var(--navy);border:0;color:#d8dfe2;padding:22px max(6vw,24px);font-size:9px}
+/* Keep all interface copy upright and readable. */
+*,*::before,*::after{font-style:normal!important}
+@media(max-width:650px){.confessional{width:92vw;margin:35px auto 60px}.window-content{padding:24px 20px}.phase-grid{gap:10px}.guilt-intro{margin:28px 0 22px}.opening-confession{padding:21px 18px}.topbar{padding:17px 4vw}}
