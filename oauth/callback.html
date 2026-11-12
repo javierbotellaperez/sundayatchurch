@@ -41,8 +41,8 @@ async function run() {
   const code = params.get("code");
   const returnedState = params.get("state");
   const adobeError = params.get("error");
-  const expectedState = sessionStorage.getItem("sac_oauth_state");
-  const verifier = sessionStorage.getItem("sac_pkce_verifier");
+  const expectedState = localStorage.getItem("sac_oauth_state");
+  const verifier = localStorage.getItem("sac_pkce_verifier");
   history.replaceState({}, document.title, location.pathname);
 
   if (adobeError) throw new Error("Adobe sign-in was not completed: " + adobeError);
@@ -50,8 +50,8 @@ async function run() {
   if (!expectedState || returnedState !== expectedState) throw new Error("The OAuth state check failed. Start a fresh sign-in.");
   if (!verifier) throw new Error("The PKCE verifier is missing. Start a fresh sign-in.");
 
-  sessionStorage.removeItem("sac_oauth_state");
-  sessionStorage.removeItem("sac_pkce_verifier");
+  localStorage.removeItem("sac_oauth_state");
+  localStorage.removeItem("sac_pkce_verifier");
 
   statusEl.textContent = "Exchanging the authorisation code with Adobe…";
   const tokenUrl = TOKEN_URL + "?client_id=" + encodeURIComponent(CLIENT_ID);

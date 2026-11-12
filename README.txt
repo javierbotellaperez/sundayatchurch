@@ -1,31 +1,17 @@
-SUNDAY AT CHURCH — FRAME.IO CONNECTION TEST (V2)
+SUNDAY AT CHURCH — FRAME.IO CONNECTION V3
 
-Files:
+Replace these two files in the GitHub repository:
 - oauth/connect.html
 - oauth/callback.html
 
-Install in GitHub:
-1. Open the repository root.
-2. Open the existing oauth folder.
-3. Replace callback.html with this package's oauth/callback.html.
-4. Replace connect.html with this package's oauth/connect.html (or add it if absent).
-5. Commit the changes to main and wait for Pages to publish.
+Commit both changes to the main branch and wait for GitHub Pages to publish.
 
-Test URL:
-https://javierbotellaperez.com/sundayatchurch/oauth/connect.html
+This version stores the short-lived OAuth state and PKCE verifier in localStorage
+instead of sessionStorage, so they can be read if Adobe returns in a separate tab.
+The callback removes both values before attempting the token exchange.
 
-Registered redirect:
-https://javierbotellaperez.com/sundayatchurch/oauth/callback.html
+No access token is stored in GitHub or localStorage. This is still a browser-only
+connection test; Adobe or Frame.io CORS restrictions may still prevent token/API
+requests from GitHub Pages.
 
-Adobe Client ID:
-243c66aa87e6460f91e6abe0a0ed27c7
-
-Important:
-- Uses Adobe's documented OAuth Single-Page App token request format:
-  POST https://ims-na1.adobelogin.com/ims/token/v3?client_id=...
-  body: grant_type=authorization_code&code=...&code_verifier=...
-- Uses PKCE S256 and a state check.
-- No client secret is used.
-- Does not persist access tokens or refresh tokens in browser storage or GitHub.
-- If the token request still fails with CORS, this is not fixable by changing a static HTML file: the browser cannot read Adobe's response. We would then need Adobe to allow the origin or use a server-side component. GitHub Pages itself cannot act as a backend.
-- This is only a connection test. It does not upload participant files, create participant folders, generate releases, or email anyone.
+Do not share authorisation codes, access tokens, or PKCE verifier values.

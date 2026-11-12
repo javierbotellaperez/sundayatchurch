@@ -28,7 +28,7 @@
     <ul>
       <li>Use the Adobe account that has access to the <em>SUNDAYATCHURCH</em> Frame.io project.</li>
       <li>Adobe will ask you to authorise the application.</li>
-      <li>This test keeps the PKCE verifier in this browser tab. It does not save access tokens in GitHub or browser storage.</li>
+      <li>This test temporarily stores the PKCE verifier in this browser's local storage so it can survive a redirect that returns in a new tab. It does not save access tokens in GitHub.</li>
     </ul>
   </div>
   <p><button id="connect" type="button">Continue to Adobe</button></p>
@@ -58,8 +58,8 @@ document.getElementById("connect").addEventListener("click", async () => {
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
     const challenge = base64url(new Uint8Array(digest));
     const state = base64url(crypto.getRandomValues(new Uint8Array(24)));
-    sessionStorage.setItem("sac_pkce_verifier", verifier);
-    sessionStorage.setItem("sac_oauth_state", state);
+    localStorage.setItem("sac_pkce_verifier", verifier);
+    localStorage.setItem("sac_oauth_state", state);
     const query = new URLSearchParams({
       client_id: CLIENT_ID,
       redirect_uri: REDIRECT_URI,
