@@ -55,9 +55,22 @@ async function verifyTurnstile(token, request, env) {
 }
 
 function safeExtension(type) {
-  if (type === "video/webm") return "webm";
-  if (type === "video/mp4") return "mp4";
+  const normalized = String(type || "").toLowerCase().split(";")[0].trim();
+  if (normalized === "video/webm") return "webm";
+  if (normalized === "video/mp4") return "mp4";
   return null;
+}
+
+function isAdult(dateString) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return false;
+  const dob = new Date(`${dateString}T00:00:00Z`);
+  if (Number.isNaN(dob.getTime()) || dob.toISOString().slice(0, 10) !== dateString) return false;
+  const today = new Date();
+  let age = today.getUTCFullYear() - dob.getUTCFullYear();
+  const beforeBirthday = today.getUTCMonth() < dob.getUTCMonth() ||
+    (today.getUTCMonth() === dob.getUTCMonth() && today.getUTCDate() < dob.getUTCDate());
+  if (beforeBirthday) age--;
+  return age >= 18;
 }
 
 export default {
@@ -117,8 +130,9 @@ export default {
     const credit = String(form.get("credit") || "").trim();
     const preferredName = String(form.get("preferredName") || "").trim();
 
-    if (!legalName || !email || !dob || signature !== legalName || !consent) {
-      return json({ error: "Required participant details or consent are missing." }, 400, origin, env);
+    if (!legalName || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !isAdult(dob) || signature !== legalName || !consent) {
+      return json({ error: "Required participant details, valid email, age requirement or consent are missing." }, 400, origin, env);
     }
     if (!["full", "preferred", "none"].includes(credit)) {
       return json({ error: "Invalid credit preference." }, 400, origin, env);

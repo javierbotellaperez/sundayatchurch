@@ -1,7 +1,7 @@
 # Cloudflare Worker + private R2 setup
 
 ## Important status
-This package contains the bilingual website and a **backend scaffold**. It is not ready for real participant submissions. The current front-end recorder still records/downloads clips in the browser; it has not yet been wired to this API. The Worker refuses uploads until security settings are completed and submissions are explicitly enabled.
+This package contains the bilingual website and a **backend scaffold**. It is not ready for real participant submissions. The front-end now has a Turnstile-protected upload path wired to this API. However, submissions remain disabled by configuration, and the release, privacy notice, IADT rights position, email/PDF workflow and retention/deletion procedures are not yet complete. The Worker refuses uploads until security settings are completed and submissions are explicitly enabled.
 
 Do not collect real participant data until the release, privacy notice, IADT rights position, retention/deletion process and email delivery have been finalised and reviewed.
 
@@ -25,7 +25,7 @@ The root `index.html` remains the GitHub Pages homepage. The Worker is deployed 
 1. Deploy the Worker once with `ENABLE_SUBMISSIONS = "false"`.
 2. In Worker settings, confirm the R2 binding named `BUCKET` points to bucket `sundayatchurch` (the wrangler.toml should create/configure this binding).
 3. Add a Worker secret named `TURNSTILE_SECRET_KEY` only after creating a Cloudflare Turnstile widget for the website. Keep the secret in Cloudflare, never in GitHub.
-4. Configure the corresponding Turnstile site key in the front-end when the upload form is implemented.
+4. The front-end now includes the Turnstile widget using the public Site Key. The Secret Key must remain a Worker Secret named `TURNSTILE_SECRET_KEY`.
 5. Keep `ENABLE_SUBMISSIONS` set to `false` until the front-end upload flow, release, privacy notice, data retention, notification/email and deletion procedures are complete and tested.
 6. When fully ready, set `ENABLE_SUBMISSIONS` to `true` in Worker variables and redeploy.
 

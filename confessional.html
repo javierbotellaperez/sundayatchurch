@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Confessional — Sunday At Church</title><link rel="stylesheet" href="styles.css"><script defer src="site.js"></script><script defer src="confessional.js"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Confessional — Sunday At Church</title><link rel="stylesheet" href="styles.css"><script defer src="site.js"></script><script defer src="confessional.js"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script></head>
 <body>
 <header class="topbar"><a class="wordmark" href="index.html">SUNDAY <span>AT</span> CHURCH</a><div class="language"><button data-lang="en" class="active">EN</button><button data-lang="es">ES</button></div></header>
 <main class="confessional">
@@ -8,7 +9,7 @@
   <p class="eyebrow">01 / THE CONFESSIONAL</p>
   <h1 data-i18n="confTitle">Take your time.</h1>
   <p class="intro" data-i18n="confIntro">This is a quiet space to share a thought, a memory or an experience. You can pause, retake an answer or leave whenever you wish.</p>
-  <div class="notice"><strong data-i18n="prototypeLabel">PROTOTYPE — NOT YET OPEN FOR REAL SUBMISSIONS</strong><p data-i18n="prototypeText">This version records in your browser and lets you download the clips. Secure upload is still being prepared. It does not send your details, signed release or footage to the filmmaker. Please do not submit real personal information or recordings yet.</p></div>
+  <div class="notice"><strong data-i18n="prototypeLabel">PROTOTYPE — NOT YET OPEN FOR REAL SUBMISSIONS</strong><p data-i18n="prototypeText">The recording and upload flow is being tested. Submissions are currently disabled. Please do not enter real personal information or record real testimony until the filmmaker announces that the Confessional is open.</p></div>
   <section class="release panel">
     <p class="eyebrow" data-i18n="releaseEyebrow">BEFORE YOU BEGIN</p><h2 data-i18n="releaseTitle">Participation & release</h2>
     <p data-i18n="releaseIntro">Please read this short draft agreement. The final wording, data-protection information and rights arrangements are still subject to review and confirmation by IADT.</p>
@@ -31,7 +32,14 @@
     <div class="controls"><button id="cameraBtn" class="button secondary" data-i18n="enableCamera">ENABLE CAMERA</button><button id="recordBtn" class="button" disabled data-i18n="startRecording">START RECORDING</button><button id="stopBtn" class="button secondary" disabled data-i18n="stopRecording">STOP</button></div>
     <div class="controls"><button id="prevBtn" class="text-button" data-i18n="previous">← PREVIOUS</button><button id="nextBtn" class="text-button" data-i18n="next">NEXT →</button></div>
     <p id="status" class="small-note" aria-live="polite"></p><div id="downloads" class="downloads"></div>
-    <p class="small-note" data-i18n="recordNotice">Camera access requires HTTPS or localhost. Clips are processed locally in this prototype and are not uploaded.</p>
+    <p class="small-note" data-i18n="recordNotice">Camera access requires HTTPS or localhost. Submissions are currently disabled.</p>
+    <div class="upload-area">
+      <p class="eyebrow" data-i18n="uploadEyebrow">SECURE SUBMISSION</p>
+      <p data-i18n="uploadIntro">When submissions open, your recorded answers will be sent securely. For now, this is a technical test only.</p>
+      <div id="turnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
+      <button id="submitBtn" class="button" type="button" disabled data-i18n="submitAnswers">SUBMIT ANSWERS</button>
+      <p id="uploadStatus" class="small-note" aria-live="polite"></p>
+    </div>
   </section>
 </main>
 <footer><span>SUNDAY AT CHURCH</span><span>CONFESSIONAL · PROTOTYPE</span></footer>
