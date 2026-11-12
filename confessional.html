@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171615">
+  <title>The Confessional — Sunday At Church</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="wordmark" href="index.html">SUNDAY AT CHURCH</a>
+      <a class="back-link" href="index.html">← BACK TO ENTRANCE</a>
+    </header>
+
+    <section class="room-heading">
+      <p class="eyebrow">ROOM 01 / PRIVATE TESTIMONY</p>
+      <h1>The Confessional</h1>
+      <p class="intro-copy">Take a moment. Find a quiet place. When you're ready, begin.</p>
+    </section>
+
+    <section id="consent-panel" class="panel">
+      <p class="panel-kicker">BEFORE YOU ENTER</p>
+      <h2>Your voice. Your image. Your choice.</h2>
+      <p>This prototype records video and audio in your browser and lets you download each answer. Nothing is uploaded to a server or sent to the filmmaker by this demo.</p>
+      <p>For a real documentary submission, participants must first receive clear information about the project, how footage will be used, who can access it, how long it will be kept and how to withdraw consent. Do not use this prototype to collect sensitive testimony until that process and secure storage are in place.</p>
+      <label class="check-row"><input id="age-check" type="checkbox"> I confirm that I am 18 years old or over.</label>
+      <label class="check-row"><input id="consent-check" type="checkbox"> I understand this is a local prototype and agree to activate my camera and microphone for this recording session.</label>
+      <button id="enter-button" class="button button-light" disabled>ENTER THE CONFESSIONAL ↗</button>
+      <p id="consent-error" class="error" role="alert"></p>
+    </section>
+
+    <section id="recording-panel" class="recording-layout" hidden>
+      <div class="camera-column">
+        <div class="camera-frame">
+          <video id="preview" autoplay muted playsinline></video>
+          <div id="camera-placeholder" class="camera-placeholder">
+            <span class="placeholder-symbol">◉</span>
+            <span>YOUR CAMERA WILL APPEAR HERE</span>
+          </div>
+          <span id="rec-indicator" class="rec-indicator" hidden>● REC</span>
+        </div>
+        <div class="camera-status">
+          <span id="camera-status">CAMERA NOT STARTED</span>
+          <span id="timer">00:00</span>
+        </div>
+        <div class="controls">
+          <button id="start-button" class="button button-record">● START ANSWER</button>
+          <button id="stop-button" class="button button-outline" disabled>STOP</button>
+        </div>
+        <p id="recording-message" class="small-note" aria-live="polite">Your recording stays in this browser until you download it.</p>
+        <div id="download-area" class="download-area" hidden>
+          <p class="panel-kicker">YOUR ANSWER IS READY</p>
+          <a id="download-link" class="button button-light" download="sunday-at-church-answer.webm">DOWNLOAD ANSWER ↓</a>
+          <button id="retake-button" class="text-button">Discard and record again</button>
+        </div>
+      </div>
+
+      <div class="question-column">
+        <div class="question-topline">
+          <span class="panel-kicker">QUESTIONS FOR REFLECTION</span>
+          <span id="question-count">01 / 08</span>
+        </div>
+        <div class="question-card">
+          <p class="eyebrow">TAKE YOUR TIME</p>
+          <h2 id="question-text">What does intimacy mean to you?</h2>
+          <p id="question-prompt">There are no right or wrong answers. Speak in your own words.</p>
+        </div>
+        <div class="question-navigation">
+          <button id="previous-button" class="button button-outline" disabled>← PREVIOUS</button>
+          <button id="next-button" class="button button-light">NEXT QUESTION →</button>
+        </div>
+        <p class="small-note">Each answer is recorded separately. Download it before moving on. The browser does not automatically save your files.</p>
+        <button id="finish-button" class="text-button finish-button">Finish session and turn off camera</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>SUNDAY AT CHURCH</span>
+      <span>LOCAL PROTOTYPE / NO SERVER UPLOAD</span>
+    </footer>
+  </main>
+  <script src="confessional.js"></script>
+</body>
+</html>
