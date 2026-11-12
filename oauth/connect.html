@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Connect Frame.io — Sunday At Church</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; }
+    main { width: min(100%, 44rem); padding: 2rem; background: var(--surface, #fff); border-radius: 1rem; }
+    .notice { padding: 1rem; border: 1px solid #d8d0c7; border-radius: .75rem; }
+    button { cursor: pointer; padding: .85rem 1.2rem; border: 0; border-radius: 999px; font: inherit; }
+    #connect { background: #171717; color: white; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">SUNDAY AT CHURCH · PRIVATE ADMIN AREA</p>
+    <h1>Connect Frame.io</h1>
+    <p>This page starts the Adobe sign-in flow for the Frame.io V4 API. It is for the project owner only, not for documentary participants.</p>
+    <div class="notice">
+      <strong>Before continuing</strong>
+      <ul>
+        <li>Sign in with the same Adobe account that has access to the <em>SUNDAYATCHURCH</em> Frame.io project.</li>
+        <li>Adobe will ask you to approve the app's access.</li>
+        <li>This test keeps the PKCE verifier only in this browser tab and does not save access tokens to the website or GitHub.</li>
+      </ul>
+    </div>
+    <p><button id="connect" type="button">Continue to Adobe</button></p>
+    <p id="status" role="status" aria-live="polite"></p>
+    <p><a href="../index.html">Return to the website</a></p>
+  </main>
+  <script>
+    const CLIENT_ID = "243c66aa87e6460f91e6abe0a0ed27c7";
+    const REDIRECT_URI = "https://javierbotellaperez.github.io/sundayatchurch/oauth/callback.html";
+    const AUTHORIZE_URL = "https://ims-na1.adobelogin.com/ims/authorize/v2";
+    const SCOPES = "openid,email,profile,offline_access,additional_info.roles";
+
+    function toBase64Url(bytes) {
+      let binary = "";
+      bytes.forEach(byte => binary += String.fromCharCode(byte));
+      return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    document.getElementById("connect").addEventListener("click", async () => {
+      const status = document.getElementById("status");
+      const button = document.getElementById("connect");
+      button.disabled = true;
+      status.textContent = "Preparing a secure sign-in…";
+      try {
+        if (!window.crypto?.subtle) throw new Error("Secure browser cryptography is unavailable. Open this page over HTTPS.");
+        const random = crypto.getRandomValues(new Uint8Array(32));
+        const verifier = toBase64Url(random);
+        const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+        const challenge = toBase64Url(new Uint8Array(digest));
+        const stateBytes = crypto.getRandomValues(new Uint8Array(24));
+        const state = toBase64Url(stateBytes);
+
+        sessionStorage.setItem("sac_frameio_pkce_verifier", verifier);
+        sessionStorage.setItem("sac_frameio_oauth_state", state);
+
+        const params = new URLSearchParams({
+          client_id: CLIENT_ID,
+          redirect_uri: REDIRECT_URI,
+          response_type: "code",
+          scope: SCOPES,
+          state,
+          code_challenge: challenge,
+          code_challenge_method: "S256"
+        });
+        window.location.assign(AUTHORIZE_URL + "?" + params.toString());
+      } catch (error) {
+        status.textContent = "Could not start sign-in: " + error.message;
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

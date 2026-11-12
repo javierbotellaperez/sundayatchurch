@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Frame.io connection — Sunday At Church</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; }
+    main { width: min(100%, 44rem); padding: 2rem; background: var(--surface, #fff); border-radius: 1rem; }
+    #status { font-weight: 600; }
+    .result { padding: 1rem; border: 1px solid #d8d0c7; border-radius: .75rem; margin-top: 1rem; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">SUNDAY AT CHURCH · PRIVATE ADMIN AREA</p>
+    <h1>Frame.io connection</h1>
+    <p id="status" role="status" aria-live="polite">Checking Adobe's response…</p>
+    <div id="detail" class="result" hidden></div>
+    <p><a href="./connect.html">Try connecting again</a></p>
+    <p><a href="../index.html">Return to the website</a></p>
+  </main>
+  <script>
+    const CLIENT_ID = "243c66aa87e6460f91e6abe0a0ed27c7";
+    const TOKEN_URL = "https://ims-na1.adobelogin.com/ims/token/v3";
+    const API_BASE = "https://api.frame.io/v4";
+
+    const statusEl = document.getElementById("status");
+    const detailEl = document.getElementById("detail");
+
+    function showDetail(message) {
+      detailEl.hidden = false;
+      detailEl.textContent = message;
+    }
+
+    async function run() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const returnedState = params.get("state");
+      const error = params.get("error");
+      const expectedState = sessionStorage.getItem("sac_frameio_oauth_state");
+      const verifier = sessionStorage.getItem("sac_frameio_pkce_verifier");
+
+      // Remove OAuth parameters from the visible address bar as soon as read.
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      if (error) {
+        sessionStorage.removeItem("sac_frameio_oauth_state");
+        sessionStorage.removeItem("sac_frameio_pkce_verifier");
+        throw new Error("Adobe sign-in was not completed (" + error + "). Please try again.");
+      }
+      if (!code || !returnedState) throw new Error("No authorisation response was received. Start from the Connect Frame.io page.");
+      if (!expectedState || returnedState !== expectedState) throw new Error("The security state check failed. Start a new sign-in.");
+      if (!verifier) throw new Error("The PKCE verifier is missing from this browser tab. Start a new sign-in.");
+
+      sessionStorage.removeItem("sac_frameio_oauth_state");
+      sessionStorage.removeItem("sac_frameio_pkce_verifier");
+
+      statusEl.textContent = "Exchanging the authorisation code…";
+      const body = new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: "https://javierbotellaperez.github.io/sundayatchurch/oauth/callback.html",
+        code_verifier: verifier
+      });
+
+      const tokenResponse = await fetch(TOKEN_URL + "?client_id=" + encodeURIComponent(CLIENT_ID), {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body
+      });
+      const tokenData = await tokenResponse.json().catch(() => ({}));
+      if (!tokenResponse.ok || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || tokenData.error || "Adobe token exchange failed (HTTP " + tokenResponse.status + ").");
+      }
+
+      statusEl.textContent = "Checking your Frame.io access…";
+      const meResponse = await fetch(API_BASE + "/me", {
+        headers: { "Authorization": "Bearer " + tokenData.access_token }
+      });
+      const meData = await meResponse.json().catch(() => ({}));
+      if (!meResponse.ok) throw new Error("Adobe sign-in succeeded, but Frame.io /me returned HTTP " + meResponse.status + ".");
+
+      const accountsResponse = await fetch(API_BASE + "/accounts", {
+        headers: { "Authorization": "Bearer " + tokenData.access_token }
+      });
+      const accountsData = await accountsResponse.json().catch(() => ({}));
+      if (!accountsResponse.ok) throw new Error("Your identity was verified, but the Frame.io accounts request returned HTTP " + accountsResponse.status + ".");
+
+      const accounts = Array.isArray(accountsData.data) ? accountsData.data : (Array.isArray(accountsData) ? accountsData : []);
+      const accountNames = accounts.map(a => a.name || a.display_name || a.account_id || a.id).filter(Boolean);
+      statusEl.textContent = "Adobe authorisation succeeded and Frame.io responded.";
+      showDetail(
+        "Signed in as: " + (meData.name || meData.email || meData.user_id || "Adobe user") +
+        "\\nAccessible Frame.io accounts: " + (accountNames.length ? accountNames.join(", ") : "The API returned an accounts response. We may need to inspect its structure next.") +
+        "\\n\\nThis was a one-time connection test. The access token was kept in memory only and has not been saved to this site or GitHub."
+      );
+      // Do not persist or display access/refresh tokens. Let the short-lived token
+      // become unreachable when this page is closed or reloaded.
+    }
+
+    run().catch(error => {
+      statusEl.textContent = "Connection not completed.";
+      showDetail(error.message + " No access token has been saved by this page.");
+    });
+  </script>
+</body>
+</html>
