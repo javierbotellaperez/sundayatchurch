@@ -1,6 +1,6 @@
 # Sunday At Church — First Confessional release
 
-This package updates the live Confessional page with a more restrained early-2000s editorial interface, explains the two project phases, presents the question bank in English and Spanish, embeds the two Adobe Sign web forms, and keeps manual verification as the submission workflow.
+This package updates the live Confessional page with a more restrained early-2000s editorial interface, explains the two project phases, presents the question bank in English only, embeds the two Adobe Sign web forms, and keeps manual verification as the submission workflow.
 
 ## Files to replace in GitHub
 
@@ -15,8 +15,8 @@ Keep your existing `site.js`, `index.html`, `wrangler.toml`, Turnstile site key,
 
 - The ten core prompts are marked CORE; the remaining prompts are OPTIONAL.
 - Participants may record any of the 20 prompts and skip anything.
-- The opening confession is prompt 1: “Forgive me, Father, for I've sinned. The last time I went to a sauna was…” / “Ave María Purísima. La última vez que fui a una sauna fue…”
-- English and Spanish Adobe Sign forms are embedded. The language switch shows the corresponding form.
+- The opening confession is prompt 1: “Forgive me, Father, for I've sinned. The last time I went to a sauna was…”
+- Only the English Adobe Sign release form is embedded. The language switch has been removed.
 - The participant must declare that the Adobe Sign release has been completed. This is not automatic verification.
 - Every uploaded submission is stored with `submissionStatus: awaiting_manual_verification`, `releaseStatus: awaiting_manual_verification` and `footageStatus: received_pending_review`.
 - The Worker does not provide public download/list endpoints. Retrieve objects through the private R2 dashboard or your controlled admin process.
@@ -51,5 +51,4 @@ Do not mark a participant as approved merely because they ticked the Adobe check
 This is a technical and editorial implementation, not legal approval. Before public launch, ensure the privacy notice accurately describes the actual controller, legal basis, special-category data handling where relevant, processors, hosting locations, retention, security, participant rights and contact route. Do not promise anonymity through post-production: participants must understand the agreed limits before recording.
 \n\nThe participant journey is now a four-step guided flow (About → Release → Confession → Submit), with language-specific labels and translated form placeholders. The Church/guilt context appears before the confession prompt.\n
 
-## Participant journey (current)
-The page uses a four-step guided flow: About, Release, Confession and Submit. The Church/guilt context appears on the opening screen before the confession prompt. Language switching covers interface labels, question text, form copy and placeholders in English and Spanish.
+The page is now English-only. Its visual direction is a restrained editorial layout with a warm paper surface, charcoal canvas, restrained oxblood accent, readable sans-serif typography, and a four-step guided flow. The layout adapts for mobile and shorter desktop viewports.\n

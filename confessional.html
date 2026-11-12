@@ -6,20 +6,15 @@
   <meta name="theme-color" content="#17263b">
   <title>The Confessional — Sunday At Church</title>
   <link rel="stylesheet" href="styles.css">
-  <script defer src="site.js"></script>
   <script defer src="confessional.js"></script>
   <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
 </head>
-<body class="xp-body">
+<body class="confessional-body">
 <header class="topbar">
   <a class="wordmark" href="index.html">SUNDAY <span>AT</span> CHURCH</a>
-  <div class="language" aria-label="Language">
-    <button data-lang="en" class="active" type="button">EN</button>
-    <button data-lang="es" type="button">ES</button>
-  </div>
 </header>
 
-<main class="confessional xp-shell">
+<main class="confessional">
   <nav class="stepper" aria-label="Participation steps">
     <button type="button" class="step-link active" data-step="0"><span>01</span><b data-i18n="stepAbout">ABOUT</b></button>
     <button type="button" class="step-link" data-step="1"><span>02</span><b data-i18n="stepRelease">RELEASE</b></button>
@@ -27,12 +22,12 @@
     <button type="button" class="step-link" data-step="3"><span>04</span><b data-i18n="stepSubmit">SUBMIT</b></button>
   </nav>
   <div class="step-progress"><span id="stepProgress"></span></div>
-  <a class="back" href="index.html" data-i18n="back">← BACK TO THE ENTRANCE</a>
+  <a class="back" href="index.html" data-i18n="back">← BACK TO SUNDAY AT CHURCH</a>
 
-  <section class="intro-window xp-window step-panel active" data-panel="0">
-    <div class="xp-titlebar"><span data-i18n="windowTitle">Sunday At Church — The Confessional</span><span class="window-controls">— □ ×</span></div>
+  <section class="intro-window step-panel active" data-panel="0">
+    
     <div class="window-content">
-      <p class="eyebrow" data-i18n="eyebrow">PHASE 01 / THE CONFESSIONAL</p>
+      <p class="eyebrow" data-i18n="eyebrow">SUNDAY AT CHURCH / PHASE 01</p>
       <h1 data-i18n="confTitle">Welcome to the Confessional.</h1>
       <p class="intro" data-i18n="confIntro">A place to leave a thought, a memory or a confession about sauna culture. You don't need to be a regular. You just need a story.</p>
       <div class="guilt-intro">
@@ -56,8 +51,8 @@
     </div>
   </section>
 
-  <section class="xp-window release-window step-panel" data-panel="1" hidden>
-    <div class="xp-titlebar"><span data-i18n="releaseWindowTitle">01 — Participation & release</span><span class="window-controls">— □ ×</span></div>
+  <section class="release-window step-panel" data-panel="1" hidden>
+    
     <div class="window-content">
       <p class="eyebrow" data-i18n="beforeBegin">BEFORE YOU BEGIN</p>
       <h2 data-i18n="releaseTitle">A quick formality.</h2>
@@ -65,50 +60,19 @@
       <div class="release-copy" id="releaseCopy"></div>
       <div class="adobe-sign-block">
         <h3 data-i18n="adobeTitle">Sign your participation release</h3>
-        <p data-i18n="adobeIntro">Choose the form in your preferred language. Adobe will send you a copy when the agreement is completed.</p>
+        <p data-i18n="adobeIntro">Complete the English participation release. Adobe will send you a copy when the agreement is completed.</p>
         <div id="adobeFormEn" class="adobe-form" data-lang-form="en">
           <iframe title="Sunday At Church participant release — English" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB7z-7_HGe2MS1gt41TlPL5qqeCvEotEmMNE-I-Is54eKC5l6pQmsf1rJW3OZ9NBVU*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
         </div>
-        <div id="adobeFormEs" class="adobe-form" data-lang-form="es" hidden>
-          <iframe title="Autorización de participación de Sunday At Church — Español" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhC5vn8Sls1-_F9MpFa28FiN_h7VEQQY2_unzSyUgNzD8aCA7pNbcwqhWcqJR42zFLs*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
-        </div>
-        <label class="check"><input type="checkbox" id="adobeReleaseCompleted"><span data-i18n="adobeCheck">I have completed the Adobe Sign release.</span></label>
-        <p class="small-note" data-i18n="adobeNote">This checkbox is a declaration, not automatic proof of signature. Every submission remains pending until the filmmaker manually checks the signed PDF and the footage.</p>
       </div>
-
-      <div class="form-grid">
-        <label><span data-i18n="legalName">Full legal name</span><input id="legalName" autocomplete="name" required data-i18n-placeholder="legalNamePlaceholder" placeholder="Your legal name"></label>
-        <label><span data-i18n="email">Email address</span><input id="email" type="email" autocomplete="email" required data-i18n-placeholder="emailPlaceholder" placeholder="you@example.com"></label>
-        <label><span data-i18n="dob">Date of birth</span><input id="dob" type="date" required></label>
-        <label><span data-i18n="creditChoice">How would you like to be credited?</span>
-          <select id="credit"><option value="full" data-i18n="creditFull">Use my full name</option><option value="preferred" data-i18n="creditPreferred">Use a preferred name</option><option value="none" data-i18n="creditNone">Do not credit me</option></select>
-        </label>
-        <label id="preferredWrap" class="wide" hidden><span data-i18n="preferredName">Preferred credit name</span><input id="preferredName" data-i18n-placeholder="preferredPlaceholder" placeholder="Name to appear in the credits"></label>
-      </div>
-      <label class="check"><input type="checkbox" id="agree"><span data-i18n="agree">I confirm that I am 18 or older, participation is voluntary, and I have read the participation and privacy information.</span></label>
     </div>
   </section>
 
-  <section class="xp-window recorder-window step-panel" data-panel="2" hidden>
-    <div class="xp-titlebar"><span data-i18n="recorderWindowTitle">02 — Your confession</span><span class="window-controls">— □ ×</span></div>
+  <section class="recorder-window step-panel" data-panel="2" hidden>
     <div class="window-content">
       <p class="eyebrow" data-i18n="recordEyebrow">YOUR TESTIMONY</p>
       <h2 data-i18n="recordTitle">Whenever you're ready.</h2>
-      <p class="intro" data-i18n="recordIntro">Start with the opening confession. The ten core prompts are the shared thread; the extra questions are there if you feel like saying more. Skip anything you don't want to answer.</p>
-      <div class="opening-confession">
-        <span class="prompt-label" data-i18n="openingLabel">THE OPENING CONFESSION</span>
-        <p data-i18n="openingPrompt">“Forgive me, Father, for I've sinned. The last time I went to a sauna was…”</p>
-        <small data-i18n="openingSub">It could have been yesterday, a few months ago, or five years ago. It might have been your first and last time.</small>
-      </div>
-
-      <div class="question-toolbar">
-        <div><span class="prompt-label" data-i18n="questionBankLabel">QUESTION BANK</span><p id="questionCount">01 / 20</p></div>
-        <div class="question-filter">
-          <button type="button" class="filter-btn active" data-filter="all" data-i18n="filterAll">ALL</button>
-          <button type="button" class="filter-btn" data-filter="core" data-i18n="filterCore">CORE</button>
-          <button type="button" class="filter-btn" data-filter="extra" data-i18n="filterExtra">EXTRA</button>
-        </div>
-      </div>
+      <p class="intro" data-i18n="recordIntro">Begin with the opening confession. The ten core prompts form a shared thread; optional questions are there if you would like to say more. Skip anything you do not want to answer.</p>
       <div class="question-card">
         <div class="question-meta"><span id="questionSection">01 / THE FIRST TIME</span><span id="questionType">CORE QUESTION</span></div>
         <h3 id="question">What did you expect to find the first time you went to a sauna?</h3>
@@ -131,10 +95,10 @@
       </div>
     </div>
   </section>
-  <section class="xp-window upload-panel step-panel" data-panel="3" hidden>
+  <section class="upload-panel step-panel" data-panel="3" hidden>
     <div class="window-content">
       <div class="upload-area">
-        <p class="eyebrow" data-i18n="uploadEyebrow">04 / SEND YOUR CONFESSION</p>
+        <p class="eyebrow" data-i18n="uploadEyebrow">04 / FINAL STEP</p>
         <h3 data-i18n="uploadTitle">Ready to send?</h3>
         <p data-i18n="uploadIntro">You can submit any recorded answers. Your participation will remain pending until the filmmaker manually verifies both your Adobe release and the uploaded footage.</p>
         <div id="turnstileWidget" class="turnstile-widget" aria-label="Security verification"></div>
