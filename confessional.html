@@ -12,8 +12,20 @@
   <div class="notice"><strong data-i18n="prototypeLabel">PROTOTYPE — NOT YET OPEN FOR REAL SUBMISSIONS</strong><p data-i18n="prototypeText">The recording and upload flow is being tested. Submissions are currently disabled. Please do not enter real personal information or record real testimony until the filmmaker announces that the Confessional is open.</p></div>
   <section class="release panel">
     <p class="eyebrow" data-i18n="releaseEyebrow">BEFORE YOU BEGIN</p><h2 data-i18n="releaseTitle">Participation & release</h2>
-    <p data-i18n="releaseIntro">Please read this short draft agreement. The final wording, data-protection information and rights arrangements are still subject to review and confirmation by IADT.</p>
+    <p data-i18n="releaseIntro">The participation release is completed separately through Adobe Sign below. Please use the same legal name and email address in both forms so the documents can be matched during the manual check.</p>
     <div class="legal-copy" id="releaseCopy"></div>
+    <div class="adobe-sign-block">
+      <h3 data-i18n="adobeTitle">Step 1 — Sign the participation release</h3>
+      <p data-i18n="adobeIntro">Complete the Adobe Sign form below before recording your testimony. You will receive a copy of the signed agreement from Adobe.</p>
+      <div id="adobeFormEn" class="adobe-form" data-lang-form="en">
+        <iframe title="Sunday At Church participant release — English" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhB7z-7_HGe2MS1gt41TlPL5qqeCvEotEmMNE-I-Is54eKC5l6pQmsf1rJW3OZ9NBVU*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
+      </div>
+      <div id="adobeFormEs" class="adobe-form" data-lang-form="es" hidden>
+        <iframe title="Autorización de participación de Sunday At Church — Español" src="https://eu1.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhC5vn8Sls1-_F9MpFa28FiN_h7VEQQY2_unzSyUgNzD8aCA7pNbcwqhWcqJR42zFLs*&hosted=false" width="100%" height="760" frameborder="0" style="border:0;overflow:hidden;min-height:760px;min-width:0"></iframe>
+      </div>
+      <label class="check"><input type="checkbox" id="adobeReleaseCompleted"><span data-i18n="adobeCheck">I have completed and submitted the Adobe Sign release.</span></label>
+      <p class="small-note" data-i18n="adobeNote">Your submission will remain pending until the filmmaker manually checks the signed Adobe agreement and the uploaded footage.</p>
+    </div>
     <div class="form-grid">
       <label><span data-i18n="legalName">Full legal name</span><input id="legalName" autocomplete="name" placeholder="Your legal name"></label>
       <label><span data-i18n="email">Email address</span><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
@@ -22,11 +34,10 @@
       <label id="preferredWrap" class="wide"><span data-i18n="preferredName">Preferred credit name</span><input id="preferredName" placeholder="Name to appear in the credits"></label>
     </div>
     <label class="check"><input type="checkbox" id="agree"><span data-i18n="agree">I confirm that I am 18 or older, have read this draft, and understand that participation is voluntary.</span></label>
-    <label><span data-i18n="typedSignature">Type your full legal name as an electronic signature (prototype only)</span><input id="signature" placeholder="Full legal name"></label>
-    <p class="small-note" data-i18n="rightsPlaceholder">Rights placeholder: the intended arrangement is that the director / project creator retains documentary ownership, subject to written clarification and approval of IADT's applicable policies. This is not yet a final legal agreement.</p>
+    
   </section>
   <section class="panel recorder">
-    <p class="eyebrow" data-i18n="recordEyebrow">YOUR TESTIMONY</p><h2 data-i18n="recordTitle">When you're ready.</h2>
+    <p class="eyebrow" data-i18n="recordEyebrow">STEP 2 / YOUR TESTIMONY</p><h2 data-i18n="recordTitle">When you're ready.</h2>
     <div class="question-row"><span id="questionNumber">01 / 08</span><p id="question">What does intimacy mean to you?</p></div>
     <video id="preview" autoplay muted playsinline></video>
     <div class="controls"><button id="cameraBtn" class="button secondary" data-i18n="enableCamera">ENABLE CAMERA</button><button id="recordBtn" class="button" disabled data-i18n="startRecording">START RECORDING</button><button id="stopBtn" class="button secondary" disabled data-i18n="stopRecording">STOP</button></div>

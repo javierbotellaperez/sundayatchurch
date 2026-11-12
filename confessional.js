@@ -47,8 +47,8 @@ $("cameraBtn").addEventListener("click",async()=>{
   }
 });
 $("recordBtn").addEventListener("click",()=>{
-  if(!$("agree").checked||!$("legalName").value.trim()||$("signature").value.trim()!==$("legalName").value.trim()){
-    status(lang==="es"?"Completa el nombre, la firma y la declaración antes de grabar.":"Complete the name, signature and declaration before recording.");
+  if(!$("agree").checked||!$("adobeReleaseCompleted").checked||!$("legalName").value.trim()){
+    status(lang==="es"?"Completa tus datos, firma la autorización de Adobe Sign y marca la casilla de confirmación.":"Complete your details, sign the Adobe release and tick the confirmation box.");
     return;
   }
   if(!adultFromDate($("dob").value)){
@@ -107,12 +107,11 @@ $("submitBtn").addEventListener("click",async()=>{
   const legalName=$("legalName").value.trim();
   const email=$("email").value.trim();
   const dob=$("dob").value;
-  const signature=$("signature").value.trim();
   const credit=$("credit").value;
   const preferredName=$("preferredName").value.trim();
 
-  if(!legalName||!email||!dob||signature!==legalName||!$("agree").checked){
-    uploadStatus(lang==="es"?"Revisa los datos obligatorios, la declaración y la firma.":"Please check the required details, declaration and signature.");
+  if(!legalName||!email||!dob||!$("agree").checked||!$("adobeReleaseCompleted").checked){
+    uploadStatus(lang==="es"?"Revisa los datos obligatorios, la declaración y la confirmación de Adobe Sign.":"Please check the required details, declaration and Adobe Sign confirmation.");
     return;
   }
   if(!adultFromDate(dob)){
@@ -136,7 +135,7 @@ $("submitBtn").addEventListener("click",async()=>{
   data.set("legalName",legalName);
   data.set("email",email);
   data.set("dob",dob);
-  data.set("signature",signature);
+  data.set("adobeReleaseCompleted","true");
   data.set("consent","true");
   data.set("credit",credit);
   data.set("preferredName",preferredName);
@@ -162,7 +161,7 @@ $("submitBtn").addEventListener("click",async()=>{
       turnstileToken="";
       return;
     }
-    uploadStatus((lang==="es"?"Envío recibido. Tu código es: ":"Submission received. Your reference is: ")+result.submissionId);
+    uploadStatus((lang==="es"?"Envío recibido. Tu código es: ":"Submission received. Your reference is: ")+result.submissionId+(lang==="es"?". La autorización y los vídeos quedan pendientes de comprobación manual.":". Your release and footage are now awaiting manual verification."));
   }catch(e){
     uploadStatus(lang==="es"?"No se pudo conectar con el servidor. Tus vídeos siguen en este navegador.":"Could not connect to the server. Your clips remain in this browser.");
   }finally{

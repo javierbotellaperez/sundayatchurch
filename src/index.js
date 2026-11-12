@@ -125,13 +125,13 @@ export default {
     const legalName = String(form.get("legalName") || "").trim();
     const email = String(form.get("email") || "").trim();
     const dob = String(form.get("dob") || "").trim();
-    const signature = String(form.get("signature") || "").trim();
+    const adobeReleaseCompleted = String(form.get("adobeReleaseCompleted") || "") === "true";
     const consent = String(form.get("consent") || "") === "true";
     const credit = String(form.get("credit") || "").trim();
     const preferredName = String(form.get("preferredName") || "").trim();
 
     if (!legalName || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-        !isAdult(dob) || signature !== legalName || !consent) {
+        !isAdult(dob) || !adobeReleaseCompleted || !consent) {
       return json({ error: "Required participant details, valid email, age requirement or consent are missing." }, 400, origin, env);
     }
     if (!["full", "preferred", "none"].includes(credit)) {
@@ -175,7 +175,10 @@ export default {
         createdAt,
         participant: { legalName, email, dob, credit, preferredName: credit === "preferred" ? preferredName : "" },
         consentRecorded: consent,
-        signatureTyped: true,
+        adobeReleaseCompletedByParticipant: true,
+        releaseVerificationStatus: "awaiting_manual_check",
+        footageVerificationStatus: "awaiting_manual_check",
+        overallStatus: "awaiting_manual_verification",
         files: files.map((f) => ({ answer: f.index, size: f.file.size, type: f.file.type }))
       };
       await env.BUCKET.put(`${prefix}submission.json`, JSON.stringify(metadata, null, 2), {
@@ -186,6 +189,6 @@ export default {
       return json({ error: "Storage failed. Please contact the filmmaker; no confirmation can be issued." }, 500, origin, env);
     }
 
-    return json({ ok: true, submissionId, message: "Your files have been received." }, 201, origin, env);
+    return json({ ok: true, submissionId, status: "awaiting_manual_verification", message: "Your files have been received and are awaiting manual verification of the signed Adobe release and footage." }, 201, origin, env);
   }
 };
