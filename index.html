@@ -18,13 +18,13 @@ h1{font-size:clamp(48px,9vw,108px);line-height:.92;letter-spacing:-.065em;font-w
 .subtitle{font-size:clamp(16px,2vw,20px);line-height:1.55;color:#c9c0b5;max-width:560px}
 .language-label{margin:66px 0 18px;font:11px monospace;letter-spacing:.15em;color:#b7a99a;text-transform:uppercase}
 .languages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.language-choice{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:#211d1a;background:#eee7db;padding:24px 25px;min-height:88px;transition:background .2s,transform .2s}
-.language-choice:hover{background:#fff;transform:translateY(-2px)}
+.language{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:#211d1a;background:#eee7db;padding:24px 25px;min-height:88px;transition:background .2s,transform .2s}
+.language:hover{background:#fff;transform:translateY(-2px)}
 .language strong{font-size:22px;font-weight:500}
 .language small{display:block;font:10px monospace;letter-spacing:.12em;margin-top:8px;color:#685d54}
 .arrow{font-size:25px;color:#8b4d43}
 .landing-footer{padding:22px 6vw;border-top:1px solid #ffffff20;display:flex;justify-content:space-between;gap:20px;color:#9e958a;font:10px monospace;letter-spacing:.12em}
-@media(max-width:600px){.landing-main{padding:70px 0}.languages{grid-template-columns:1fr}.language-choice{min-height:72px}.landing-footer{flex-direction:column}}
+@media(max-width:600px){.landing-main{padding:70px 0}.languages{grid-template-columns:1fr}.language{min-height:72px}.landing-footer{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -36,8 +36,8 @@ h1{font-size:clamp(48px,9vw,108px);line-height:.92;letter-spacing:-.065em;font-w
 <p class="subtitle">A space for stories, memories and reflections on sauna culture. Choose the language in which you would like to take part.</p>
 <p class="language-label">Choose your language / Elige tu idioma</p>
 <div class="languages">
-<a class="language-choice" href="confesionario.html"><span><strong>Castellano</strong><small>ENTRAR AL CONFESIONARIO</small></span><span class="arrow">↗</span></a>
-<a class="language-choice" href="confessional-en.html"><span><strong>English</strong><small>ENTER THE CONFESSIONAL</small></span><span class="arrow">↗</span></a>
+<a class="language" href="confesionario.html"><span><strong>Castellano</strong><small>ENTRAR AL CONFESIONARIO</small></span><span class="arrow">↗</span></a>
+<a class="language" href="confessional-en.html"><span><strong>English</strong><small>ENTER THE CONFESSIONAL</small></span><span class="arrow">↗</span></a>
 </div>
 </main>
 <footer class="landing-footer"><span>THE CONFESSIONAL · PHASE 01</span><span>DESIRE · MEMORY · BELONGING</span></footer>
