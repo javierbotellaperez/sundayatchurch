@@ -52,3 +52,6 @@ This is a technical and editorial implementation, not legal approval. Before pub
 \n\nThe participant journey is now a four-step guided flow (About → Release → Confession → Submit), with language-specific labels and translated form placeholders. The Church/guilt context appears before the confession prompt.\n
 
 The page is now English-only. Its visual direction is a restrained editorial layout with a warm paper surface, charcoal canvas, restrained oxblood accent, readable sans-serif typography, and a four-step guided flow. The layout adapts for mobile and shorter desktop viewports.\n
+
+## English release-step fix (13 November 2026)
+The English page now includes the participant detail and declaration controls referenced by `confessional-en.js` (legal name, email, date of birth, credit choice, preferred credit name, Adobe completion declaration and participation declaration). Previously those elements were missing from the English HTML, causing the Continue / release validation logic to fail.
