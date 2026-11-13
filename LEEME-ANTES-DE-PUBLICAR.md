@@ -25,3 +25,7 @@ Cada versión mantiene sus propios textos, preguntas, instrucciones y formulario
 
 ## Importante
 El ZIP no despliega cambios ni modifica la configuración de Cloudflare, Adobe Sign o GitHub. La participación sigue pendiente de verificación manual de la autorización firmada y de los vídeos recibidos.
+
+
+## Formularios Adobe Sign
+Los dos formularios se muestran mediante sus URL públicas de Adobe Sign dentro de iframes. Se ha aumentado la altura visible para evitar que los campos inferiores queden recortados. Si siguen faltando campos incluso al final del formulario, comprueba que la URL pública (wid) corresponde a la versión publicada más reciente del Web Form: editar el documento original o la plantilla no siempre actualiza un Web Form ya publicado. En ese caso, publica/actualiza el Web Form en Adobe Sign y sustituye el `wid` correspondiente en el iframe de cada idioma.
