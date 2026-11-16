@@ -31,17 +31,21 @@ The root `index.html` remains the GitHub Pages homepage. The Worker is deployed 
 
 ## API endpoints
 - `GET /api/health` reports whether the Worker is running and whether submissions are enabled.
-- `POST /api/submissions` accepts multipart form data and stores answer clips plus a private metadata JSON object in R2.
+- `POST /api/submissions/init` validates participant declarations and Turnstile, then creates a private upload session.
+- `PUT /api/submissions/{submission-id}/answers/{question-number}` uploads one WebM/MP4 answer to the private staging prefix.
+- `POST /api/submissions/{submission-id}/finalize` verifies every expected staged object, copies it into the final private submission folder, and writes `submission.json`.
 - There is intentionally no public file listing or download endpoint.
 
-Required multipart fields for the future front-end integration:
+The current front end sends JSON to the init endpoint, then sends each video as a separate raw request. The Worker requires the participant fields, Adobe release declaration and Turnstile token at init. Each video request requires the private bearer token returned by init.
 - `legalName`, `email`, `dob`, `signature`, `consent=true`
 - `credit` (`full`, `preferred`, or `none`)
 - `preferredName` when credit is `preferred`
 - `turnstileToken`
 - `answer1` through `answer8` as WebM or MP4 files
 
-Limits: 40 MB per clip, 200 MB total, maximum eight clips.
+Limits: 40 MB per clip, 200 MB total, maximum 20 clips.
+
+Configure an R2 lifecycle rule for the `pending/` prefix to expire staged upload objects after 3 days. Do not apply this rule to `submissions/`.
 
 ## Security notes
 - The R2 bucket must remain private. Do not enable public access or create a public development URL.

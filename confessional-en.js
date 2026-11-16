@@ -38,6 +38,122 @@ const lang = "en";
 let currentIndex = 0, stream = null, recorder = null, chunks = [], clips = {};
 let turnstileToken = "", turnstileWidgetId = null, activeFilter = "all";
 
+// Local recovery: completed recordings are persisted in IndexedDB, not only in RAM.
+// Browser storage is best-effort (not a substitute for a participant's own backup).
+const LOCAL_DB_NAME = "SundayAtChurchConfessional";
+const LOCAL_DB_VERSION = 1;
+let localDbPromise = null;
+let uploadSession = null;
+
+function openLocalDb(){
+  if(!("indexedDB" in window)) return Promise.reject(new Error("IndexedDB unavailable"));
+  if(localDbPromise) return localDbPromise;
+  localDbPromise = new Promise((resolve,reject)=>{
+    const request=indexedDB.open(LOCAL_DB_NAME,LOCAL_DB_VERSION);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains("clips")) db.createObjectStore("clips",{keyPath:"key"});
+      if(!db.objectStoreNames.contains("sessions")) db.createObjectStore("sessions",{keyPath:"key"});
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error("Could not open local recording storage"));
+  });
+  return localDbPromise;
+}
+async function localPut(storeName,value){
+  const db=await openLocalDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(storeName,"readwrite");
+    tx.objectStore(storeName).put(value);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error||new Error("Local save failed"));
+    tx.onabort=()=>reject(tx.error||new Error("Local save was interrupted"));
+  });
+}
+async function localGetAll(storeName){
+  const db=await openLocalDb();
+  return new Promise((resolve,reject)=>{
+    const request=db.transaction(storeName,"readonly").objectStore(storeName).getAll();
+    request.onsuccess=()=>resolve(request.result||[]);
+    request.onerror=()=>reject(request.error||new Error("Local recovery failed"));
+  });
+}
+async function localDeleteSession(){
+  const db=await openLocalDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction("sessions","readwrite");
+    tx.objectStore("sessions").delete("active");
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error||new Error("Could not clear upload session"));
+  });
+}
+async function localClear(){
+  const db=await openLocalDb();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(["clips","sessions"],"readwrite");
+    tx.objectStore("clips").clear();
+    tx.objectStore("sessions").clear();
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error||new Error("Could not clear local recordings"));
+  });
+}
+async function persistClip(index,blob){
+  await localPut("clips",{key:`clip-${index}`,index,blob,updatedAt:Date.now()});
+}
+async function persistUploadSession(){
+  if(uploadSession) await localPut("sessions",{key:"active",value:uploadSession});
+}
+async function restoreLocalWork(){
+  try{
+    const saved=await localGetAll("clips");
+    saved.forEach(item=>{if(item.blob instanceof Blob) clips[item.index]=item.blob;});
+    const sessions=await localGetAll("sessions");
+    const active=sessions.find(item=>item.key==="active");
+    if(active) uploadSession=active.value;
+    if(Object.keys(clips).length){
+      renderQuestion();
+      setStatus(t("recoveredLocal"));
+      setUploadStatus(t("localRecoveryNotice"));
+    }
+    refreshSubmitState();
+  }catch(error){
+    console.warn("Local recording recovery is unavailable:",error);
+    setStatus(t("localStorageWarning"));
+  }
+}
+function localMessage(key){
+  const messages={
+    es:{
+      recoveredLocal:"Hemos recuperado respuestas guardadas en este navegador.",
+      localRecoveryNotice:"Hay grabaciones guardadas localmente. Mantén esta pestaña abierta hasta recibir el código de confirmación.",
+      localStorageWarning:"No se pudo activar el guardado de recuperación. Descarga tus respuestas como copia de seguridad.",
+      uploadStarting:"Preparando el envío seguro…",
+      uploading:"Subiendo respuesta",
+      uploaded:"Respuesta recibida y verificada",
+      finalizing:"Comprobando todos los archivos en el almacenamiento…",
+      retry:"No se ha podido completar el envío. Tus grabaciones siguen guardadas en este navegador; puedes volver a intentarlo.",
+      received:"Envío recibido y archivos verificados. Tu referencia es: ",
+      leaveWarning:"Tienes grabaciones que aún no han recibido confirmación. Si sales, podrías perder el acceso a ellas.",
+      sessionExpired:"La sesión de envío ha caducado. Vuelve a verificarte para iniciar un nuevo envío; tus grabaciones siguen guardadas."
+    },
+    en:{
+      recoveredLocal:"We recovered answers saved in this browser.",
+      localRecoveryNotice:"Recordings are saved locally. Keep this tab open until you receive the confirmation code.",
+      localStorageWarning:"Recovery storage could not be enabled. Please download your answers as a backup.",
+      uploadStarting:"Preparing your secure submission…",
+      uploading:"Uploading answer",
+      uploaded:"Answer received and verified",
+      finalizing:"Checking all files in secure storage…",
+      retry:"The submission could not be completed. Your recordings remain saved in this browser; you can retry.",
+      received:"Submission received and files verified. Your reference is: ",
+      leaveWarning:"You have recordings that have not yet been confirmed. If you leave, you may lose access to them.",
+      sessionExpired:"The upload session has expired. Please verify again to start a new submission; your recordings are still saved."
+    }
+  };
+  return messages[lang]?.[key] || key;
+}
+
+
 function t(key){return copy[lang][key] || key;}
 
 let activeStep = 0;
@@ -88,6 +204,12 @@ $("stepNext").addEventListener("click",()=>{
 
 function setStatus(message){$("status").textContent=message;}
 function setUploadStatus(message){$("uploadStatus").textContent=message;}
+function setUploadProgress(value){
+  const bar=$("uploadProgress");
+  if(!bar)return;
+  bar.hidden=false;
+  bar.value=Math.max(0,Math.min(100,Number(value)||0));
+}
 function adultFromDate(value){
   if(!value)return false;
   const dob=new Date(value+"T00:00:00");
@@ -138,7 +260,7 @@ window.onTurnstileLoad=function(){
     "error-callback":()=>{turnstileToken="";refreshSubmitState();setUploadStatus("Verification could not be completed.");}
   });
 };
-function refreshSubmitState(){const hasClips=Object.keys(clips).length>0;$("submitBtn").disabled=!(hasClips&&turnstileToken);}
+function refreshSubmitState(){const hasClips=Object.keys(clips).length>0;$("submitBtn").disabled=!(hasClips&&(turnstileToken||uploadSession));}
 $("cameraBtn").addEventListener("click",async()=>{
   try{stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});$("preview").srcObject=stream;$("recordBtn").disabled=false;setStatus(t("cameraReady"));}
   catch(e){setStatus(t("cameraError"));}
@@ -153,9 +275,18 @@ $("recordBtn").addEventListener("click",()=>{
   else if(MediaRecorder.isTypeSupported("video/webm;codecs=vp8"))mime="video/webm;codecs=vp8";
   recorder=new MediaRecorder(stream,{mimeType:mime});
   recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
-  recorder.onstop=()=>{
+  recorder.onstop=async()=>{
     const type=(recorder.mimeType||"video/webm").split(";")[0];
-    clips[currentIndex]=new Blob(chunks,{type});renderQuestion();refreshSubmitState();setStatus(t("saved"));
+    const completedBlob=new Blob(chunks,{type});
+    clips[currentIndex]=completedBlob;
+    renderQuestion();refreshSubmitState();
+    try{
+      await persistClip(currentIndex,completedBlob);
+      setStatus(t("saved"));
+    }catch(error){
+      console.warn("Could not persist this recording:",error);
+      setStatus(localMessage("localStorageWarning"));
+    }
   };
   recorder.start();$("recordBtn").disabled=true;$("stopBtn").disabled=false;setStatus(t("recording"));
 });
@@ -168,25 +299,98 @@ $("submitBtn").addEventListener("click",async()=>{
   if(!$("adobeReleaseCompleted").checked){setUploadStatus(t("needRelease"));return;}
   if(!adultFromDate(dob)){setUploadStatus(t("adultOnly"));return;}
   if(credit==="preferred"&&!preferredName){setUploadStatus(t("needPreferred"));return;}
-  if(!turnstileToken){setUploadStatus(t("needTurnstile"));return;}
+  if(!uploadSession&&!turnstileToken){setUploadStatus(t("needTurnstile"));return;}
   const keys=Object.keys(clips).map(Number).sort((a,b)=>a-b);
   if(!keys.length){setUploadStatus(t("noClips"));return;}
-  const data=new FormData();
-  data.set("legalName",legalName);data.set("email",email);data.set("dob",dob);
-  data.set("consent","true");data.set("adobeReleaseDeclared","true");
-  data.set("credit",credit);data.set("preferredName",preferredName);data.set("turnstileToken",turnstileToken);
-  data.set("language",lang);
-  keys.forEach(k=>{const blob=clips[k];const ext=blob.type==="video/mp4"?"mp4":"webm";data.set(`answer${k+1}`,blob,`question-${String(k+1).padStart(2,"0")}.${ext}`);});
-  $("submitBtn").disabled=true;setUploadStatus(t("sending"));
+
+  const button=$("submitBtn");
+  button.disabled=true;
+  setUploadProgress(0);
   try{
-    const response=await fetch(`${API_BASE}/api/submissions`,{method:"POST",body:data});
-    const result=await response.json().catch(()=>({}));
-    if(response.status===503){setUploadStatus(t("serviceOff"));return;}
-    if(!response.ok){setUploadStatus(result.error||t("failed"));if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);turnstileToken="";return;}
-    setUploadStatus(t("received")+result.submissionId);
-  }catch(e){setUploadStatus(t("connectionError"));}
-  finally{refreshSubmitState();}
+    // Create a private, short-lived upload session. Turnstile is checked once here.
+    if(!uploadSession){
+      setUploadStatus(localMessage("uploadStarting"));
+      const initResponse=await fetch(`${API_BASE}/api/submissions/init`,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          legalName,email,dob,consent:true,adobeReleaseDeclared:true,
+          credit,preferredName,language:lang,turnstileToken,answers:keys.map(k=>k+1)
+        })
+      });
+      const initResult=await initResponse.json().catch(()=>({}));
+      if(!initResponse.ok) throw new Error(initResult.error||t("failed"));
+      uploadSession={submissionId:initResult.submissionId,uploadToken:initResult.uploadToken,completed:[]};
+      await persistUploadSession();
+      turnstileToken="";
+      if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);
+    }
+
+    // Each answer is uploaded separately. A failed answer can be retried without
+    // bundling every recording into one large multipart request.
+    for(let i=0;i<keys.length;i++){
+      const questionNumber=keys[i]+1;
+      if(uploadSession.completed.includes(questionNumber)) continue;
+      const blob=clips[keys[i]];
+      const contentType=blob.type==="video/mp4"?"video/mp4":"video/webm";
+      setUploadStatus(`${localMessage("uploading")} ${i+1}/${keys.length} · ${Math.round(blob.size/1024/1024*10)/10} MB`);
+      const response=await fetch(`${API_BASE}/api/submissions/${uploadSession.submissionId}/answers/${questionNumber}`,{
+        method:"PUT",
+        headers:{"Authorization":`Bearer ${uploadSession.uploadToken}`,"Content-Type":contentType},
+        body:blob
+      });
+      const result=await response.json().catch(()=>({}));
+      if(response.status===401){
+        uploadSession=null;
+        await localDeleteSession();
+        if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);
+        turnstileToken="";
+        throw new Error(localMessage("sessionExpired"));
+      }
+      if(!response.ok) throw new Error(result.error||t("failed"));
+      uploadSession.completed.push(questionNumber);
+      await persistUploadSession();
+      setUploadProgress(Math.round(uploadSession.completed.length/keys.length*100));
+      setUploadStatus(`${localMessage("uploaded")} ${i+1}/${keys.length}`);
+    }
+
+    setUploadProgress(100);
+    setUploadStatus(localMessage("finalizing"));
+    const finalResponse=await fetch(`${API_BASE}/api/submissions/${uploadSession.submissionId}/finalize`,{
+      method:"POST",headers:{"Authorization":`Bearer ${uploadSession.uploadToken}`}
+    });
+    const finalResult=await finalResponse.json().catch(()=>({}));
+    if(finalResponse.status===401){
+      uploadSession=null;
+      await localDeleteSession();
+      if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);
+      turnstileToken="";
+      throw new Error(localMessage("sessionExpired"));
+    }
+    if(!finalResponse.ok) throw new Error(finalResult.error||t("failed"));
+    if(!finalResult.ok||!finalResult.submissionId||finalResult.verifiedAnswers?.length!==keys.length){
+      throw new Error(t("failed"));
+    }
+
+    const reference=finalResult.submissionId;
+    // Clear local recordings only after the Worker confirms all R2 objects and metadata.
+    try{await localClear();}catch(error){console.warn("Upload succeeded but local cleanup failed:",error);}
+    clips={};uploadSession=null;renderQuestion();refreshSubmitState();
+    setUploadStatus(localMessage("received")+reference);
+  }catch(error){
+    console.error("Submission upload failed:",error);
+    setUploadStatus(`${localMessage("retry")} ${error.message||""}`);
+  }finally{
+    refreshSubmitState();
+  }
 });
-window.addEventListener("beforeunload",()=>{if(stream)stream.getTracks().forEach(track=>track.stop());});
+window.addEventListener("beforeunload",(event)=>{
+  if(stream)stream.getTracks().forEach(track=>track.stop());
+  if(Object.keys(clips).length){
+    event.preventDefault();
+    event.returnValue=localMessage("leaveWarning");
+    return event.returnValue;
+  }
+});
 applyLanguage();
 showStep(0);
+restoreLocalWork();

@@ -1,3 +1,5 @@
+> **Package note:** This file describes an earlier English-only iteration. The current ZIP contains the bilingual entry pages (`confesionario.html` and `confessional-en.html`) and the current upload implementation is documented in `UPLOAD-RECOVERY-AND-DEPLOYMENT.md`.
+
 # Sunday At Church — First Confessional release
 
 This package updates the live Confessional page with a more restrained early-2000s editorial interface, explains the two project phases, presents the question bank in English only, embeds the two Adobe Sign web forms, and keeps manual verification as the submission workflow.

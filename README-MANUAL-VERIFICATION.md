@@ -1,3 +1,5 @@
+> **Upload implementation update:** The original multipart-upload steps below are superseded by `UPLOAD-RECOVERY-AND-DEPLOYMENT.md`. The current Worker uploads each answer separately, stages files under `pending/`, and finalizes them into `submissions/` only after verification. Follow the new deployment checklist for current technical steps.
+
 # Sunday At Church — Adobe Sign + manual footage verification
 
 ## What this version changes
