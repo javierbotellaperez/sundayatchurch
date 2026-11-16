@@ -136,40 +136,75 @@ async function handleAnswer(request, env, origin, id, number) {
 
   const ext = safeExtension(request.headers.get("Content-Type"));
   if (!ext) return json({ error: "Only WebM or MP4 video is accepted." }, 415, origin, env);
-  const declaredLength = Number(request.headers.get("Content-Length") || "0");
-  if (declaredLength > MAX_FILE_BYTES) return json({ error: "This video exceeds the 40 MB limit." }, 413, origin, env);
+  const contentLengthHeader = request.headers.get("Content-Length");
+  const declaredLength = contentLengthHeader === null ? null : Number(contentLengthHeader);
+  if (declaredLength !== null && (!Number.isSafeInteger(declaredLength) || declaredLength <= 0)) {
+    return json({ error: "A valid Content-Length header is required for this video." }, 411, origin, env);
+  }
+  if (declaredLength !== null && declaredLength > MAX_FILE_BYTES) {
+    return json({ error: "This video exceeds the 40 MB limit." }, 413, origin, env);
+  }
   if (!request.body) return json({ error: "The video body is empty." }, 400, origin, env);
 
   const existingTotal = Number(session.totalBytes || 0);
   const previous = session.uploaded?.[String(number)];
   const previousSize = Number(previous?.size || 0);
-  if (existingTotal - previousSize + declaredLength > MAX_TOTAL_BYTES) {
+  if (declaredLength !== null && existingTotal - previousSize + declaredLength > MAX_TOTAL_BYTES) {
     return json({ error: "The combined videos exceed the 200 MB limit." }, 413, origin, env);
   }
 
-  // Enforce the per-file limit while streaming, including browsers that omit Content-Length.
+  // R2 requires a stream with a known length. Do not pipe a known-length request
+  // through TransformStream: that strips the length metadata and makes R2.put fail.
+  // Browser Blob uploads include Content-Length, so pass that original request body
+  // directly to R2. If a client omits Content-Length, buffer only this bounded
+  // single answer (maximum 40 MB) and enforce both limits while reading it.
+  let uploadBody = request.body;
   let bytesSeen = 0;
-  const limitedBody = request.body.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      bytesSeen += chunk.byteLength;
-      if (bytesSeen > MAX_FILE_BYTES) throw new Error("Video exceeds the 40 MB limit.");
-      if (existingTotal - previousSize + bytesSeen > MAX_TOTAL_BYTES) {
-        throw new Error("Combined videos exceed the 200 MB limit.");
+  if (declaredLength === null) {
+    const reader = request.body.getReader();
+    const chunks = [];
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        bytesSeen += value.byteLength;
+        if (bytesSeen > MAX_FILE_BYTES) {
+          await reader.cancel();
+          return json({ error: "This video exceeds the 40 MB limit." }, 413, origin, env);
+        }
+        if (existingTotal - previousSize + bytesSeen > MAX_TOTAL_BYTES) {
+          await reader.cancel();
+          return json({ error: "The combined videos exceed the 200 MB limit." }, 413, origin, env);
+        }
+        chunks.push(value);
       }
-      controller.enqueue(chunk);
+    } finally {
+      reader.releaseLock();
     }
-  }));
+    if (!bytesSeen) return json({ error: "The video body is empty." }, 400, origin, env);
+    const buffered = new Uint8Array(bytesSeen);
+    let offset = 0;
+    for (const chunk of chunks) { buffered.set(chunk, offset); offset += chunk.byteLength; }
+    uploadBody = buffered;
+  } else {
+    bytesSeen = declaredLength;
+  }
+
   const key = answerKey(id, number, ext);
   try {
-    await env.BUCKET.put(key, limitedBody, {
+    await env.BUCKET.put(key, uploadBody, {
       httpMetadata: { contentType: `video/${ext}` },
       customMetadata: { submissionId: id, createdAt: session.createdAt, questionNumber: String(number) }
     });
   } catch (error) {
+    // Log the technical cause without logging participant data or the bearer token.
+    console.error("R2 answer upload failed", {
+      submissionId: id, question: number,
+      error: error instanceof Error ? error.message : String(error)
+    });
     const tooLarge = /40 MB|200 MB/.test(String(error));
     return json({ error: tooLarge ? "The video or combined submission exceeds the allowed size." : "The upload could not be stored. Please retry this answer." }, tooLarge ? 413 : 500, origin, env);
   }
-  if (!bytesSeen) return json({ error: "The video body is empty." }, 400, origin, env);
   const head = await env.BUCKET.head(key);
   if (!head || head.size !== bytesSeen) return json({ error: "The uploaded video could not be verified in storage. Please retry this answer." }, 500, origin, env);
 
