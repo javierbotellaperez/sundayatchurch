@@ -385,6 +385,19 @@ $("submitBtn").addEventListener("click",async()=>{
   if(!uploadSession&&!turnstileToken){setUploadStatus(t("needTurnstile"));return;}
   const keys=Object.keys(clips).map(Number).sort((a,b)=>a-b);
   if(!keys.length){setUploadStatus(t("noClips"));return;}
+  const expectedAnswers=keys.map(k=>k+1);
+
+  // A saved upload session is bound to the exact set of answers selected when
+  // it was created. If the participant records/skips another answer after a
+  // failed attempt, discard that stale session and create a fresh one. Older
+  // sessions created before this safeguard have no expectedAnswers field and
+  // are safely restarted as well; local recordings are never deleted here.
+  if(uploadSession && (!Array.isArray(uploadSession.expectedAnswers) ||
+      uploadSession.expectedAnswers.length!==expectedAnswers.length ||
+      uploadSession.expectedAnswers.some((n,i)=>n!==expectedAnswers[i]))){
+    uploadSession=null;
+    await localDeleteSession();
+  }
 
   const button=$("submitBtn");
   button.disabled=true;
@@ -407,7 +420,9 @@ $("submitBtn").addEventListener("click",async()=>{
       });
       const initResult=await initResponse.json().catch(()=>({}));
       if(!initResponse.ok) throw new Error(initResult.error||t("failed"));
-      uploadSession={submissionId:initResult.submissionId,uploadToken:initResult.uploadToken,completed:[]};
+      uploadSession={submissionId:initResult.submissionId,uploadToken:initResult.uploadToken,
+        expectedAnswers:Array.isArray(initResult.expectedAnswers)?initResult.expectedAnswers:expectedAnswers,
+        completed:[]};
       await persistUploadSession();
       turnstileToken="";
       if(window.turnstile&&turnstileWidgetId!==null)window.turnstile.reset(turnstileWidgetId);
