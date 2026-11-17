@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#17263b">
   <title>El Confesionario — Sunday At Church</title>
   <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="confessional.js"></script>
   <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
 </head>
@@ -57,7 +58,34 @@
       <p class="eyebrow" data-i18n="beforeBegin">ANTES DE EMPEZAR</p>
       <h2 data-i18n="releaseTitle">Un trámite necesario.</h2>
       <p data-i18n="releaseIntro">Antes de grabar, completa la autorización de participación a través de Adobe Sign. Utiliza el mismo nombre legal y la misma dirección de correo electrónico en ambos formularios para que el cineasta pueda relacionarlos manualmente.</p>
-      <div class="release-copy" id="releaseCopy"></div>
+      <div class="release-choice">
+        <h3>Elige cómo quieres firmar</h3>
+        <p>Tu privacidad importa. Puedes participar en este proyecto sin revelar tu nombre real.</p>
+        <div class="controls"><button type="button" class="xp-button secondary" id="chooseStandard">USAR MI NOMBRE REAL · ADOBE SIGN</button><button type="button" class="xp-button" id="chooseAnonymous">PARTICIPAR DE FORMA ANÓNIMA</button></div>
+      </div>
+      <div id="anonymousRelease" hidden>
+        <h3>Autorización anónima de participación</h3>
+        <p>No necesitas facilitar tu nombre legal, correo electrónico ni fecha de nacimiento. Puedes elegir un seudónimo opcional para tu referencia privada o crédito público. La web y los proveedores de seguridad pueden tratar información técnica, como tu dirección IP, tal y como se explica en el Aviso de Privacidad.</p>
+        <label>Seudónimo opcional<input id="anonymousPseudonym" maxlength="80" autocomplete="nickname" placeholder="El nombre que quieras utilizar (opcional)"></label>
+        <label class="check"><input id="anonymousAge" type="checkbox"> Confirmo que tengo al menos 18 años.</label>
+        <label class="check"><input id="anonymousReleaseAgree" type="checkbox"> He leído y acepto los términos de la autorización de participación y el Aviso de Privacidad.</label>
+        <label class="check"><input id="anonymousConsent" type="checkbox"> Doy mi consentimiento explícito al tratamiento de los datos personales de categorías especiales que decida revelar para las finalidades documentales descritas en el Aviso de Privacidad.</label>
+        <h4>Firma</h4>
+        <div class="controls"><button type="button" class="xp-button secondary" id="signatureTypedMode">ESCRIBIR MI FIRMA</button><button type="button" class="xp-button secondary" id="signatureDrawnMode">DIBUJAR MI FIRMA</button></div>
+        <div id="typedSignatureWrap"><label>Escribe la firma que quieras utilizar<input id="typedSignature" maxlength="100" placeholder="Tu nombre elegido o firma"></label></div>
+        <div id="drawnSignatureWrap" hidden><canvas id="signatureCanvas" width="720" height="180" style="width:100%;max-width:720px;background:#fff;border:1px solid #888;touch-action:none"></canvas><button type="button" class="xp-button secondary" id="clearSignature">BORRAR FIRMA</button></div>
+        <p class="small-note">La firma y la autorización se guardarán junto con tu envío mediante un código de referencia. La producción no puede garantizar el anonimato de tu imagen, voz o historia grabadas.</p>
+        <div class="release-copy"><h4>Qué estás autorizando</h4>
+        <p><b>1. Autorización para grabar y utilizar.</b> Autorizas a Javier Botella Pérez a grabar y utilizar tu imagen, apariencia, voz, respuestas, testimonios y aportaciones para Sunday At Church, incluido el Confesionario online. El Confesionario online no solicita ni incluye desnudez ni actividad sexual. Tu participación es voluntaria y puedes omitir cualquier pregunta.</p>
+        <p><b>2. Crédito y anonimato.</b> Puedes utilizar un seudónimo o elegir no aparecer en los créditos. Si deseas anonimato en la grabación, eres responsable de adoptar precauciones antes y durante la grabación. La producción no modificará visualmente el material para ocultar tu identidad (incluidos desenfoques, máscaras, recortes o eliminación de detalles identificativos). Solo podrá acordarse previamente una modificación del tono de voz. No se puede garantizar el anonimato: la voz, el cuerpo, la historia, el entorno o el contexto podrían identificarte.</p>
+        <p><b>3. Edición, uso y distribución.</b> Concedes al Director permiso mundial, sin fecha fija de finalización, para incorporar, reproducir, editar, adaptar, subtitular, exhibir, distribuir y utilizar tu participación en Sunday At Church y sus versiones, incluidas proyecciones académicas, festivales, cines, exposiciones culturales, televisión, streaming, distribución online y promoción relacionada con el proyecto. La aportación podrá seleccionarse, acortarse, ordenarse, reorganizarse y subtitularse, pero no se utilizará conscientemente en un contexto sustancialmente engañoso. No tienes derecho automático a aprobar el montaje final. Esto no transfiere la titularidad de obras preexistentes ni renuncia a derechos irrenunciables. No se promete remuneración, regalías ni participación en ingresos.</p>
+        <p><b>4. Archivo y futura productora.</b> El Director podrá conservar materiales del proyecto como archivo documental y crear o utilizar una productora en el futuro. Cualquier cesión o licencia deberá ser legal y coherente con esta autorización y el Aviso de Privacidad. Una futura empresa no adquiere automáticamente el derecho a utilizar datos personales por recibir los derechos de la película.</p>
+        <p><b>5. Participación voluntaria y retirada.</b> La participación es voluntaria y no remunerada. Puedes omitir preguntas y detenerte antes de enviar tu aportación. Puedes contactar con el Director para retirar tu consentimiento para futuros tratamientos cuando sea la base jurídica. La retirada no afecta al tratamiento lícito anterior; puede que no sea posible recuperar materiales distribuidos lícitamente a terceros o incorporados a copias fuera del control del Director. Se mantienen tus derechos legales.</p>
+        <p><b>6. Consentimiento explícito para protección de datos.</b> Las aportaciones pueden revelar información sobre la vida u orientación sexual, que puede constituir una categoría especial de datos según el artículo 9 del RGPD. El Aviso de Privacidad explica finalidades, bases jurídicas, destinatarios, almacenamiento y derechos. Das tu consentimiento explícito al tratamiento de los datos de categorías especiales que decidas revelar para las finalidades documentales descritas en dicho aviso. Puedes retirar el consentimiento para futuros tratamientos cuando sea la base jurídica.</p>
+        <p>Al firmar, confirmas que tienes al menos 18 años, que has leído y comprendido esta autorización y el Aviso de Privacidad y que has tenido oportunidad de formular preguntas. Contacto: <a href="mailto:hi@javierbotellaperez.com">hi@javierbotellaperez.com</a>.</p></div>
+      </div>
+      <div id="standardReleaseFields">
+<div class="release-copy" id="releaseCopy"></div>
       <div class="form-grid">
         <label>Nombre y apellidos (nombre legal)<input id="legalName" autocomplete="name" required></label>
         <label>Correo electrónico<input id="email" type="email" autocomplete="email" required></label>
@@ -75,7 +103,8 @@
         </div>
       </div>
     </div>
-  </section>
+        </div>
+</section>
 
   <section class="recorder-window step-panel" data-panel="2" hidden>
     <div class="window-content">

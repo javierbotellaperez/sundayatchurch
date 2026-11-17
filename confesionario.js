@@ -113,6 +113,7 @@ const copy = { es: {
 const lang = "es";
 let currentIndex = 0, stream = null, recorder = null, chunks = [], clips = {};
 let turnstileToken = "", turnstileWidgetId = null, activeFilter = "all";
+let releaseMode = "standard", signatureMode = "typed", signatureHasInk = false;
 
 // Local recovery: completed recordings are persisted in IndexedDB, not only in RAM.
 // Browser storage is best-effort (not a substitute for a participant's own backup).
@@ -261,6 +262,10 @@ document.querySelectorAll(".step-link").forEach(link=>link.addEventListener("cli
   showStep(target);
 }));
 function releaseReady(){
+  if(releaseMode === "anonymous"){
+    const signatureOk = signatureMode === "typed" ? $("typedSignature").value.trim().length > 0 : signatureHasInk;
+    return $("anonymousAge").checked && $("anonymousReleaseAgree").checked && $("anonymousConsent").checked && signatureOk;
+  }
   return $("agree").checked && $("adobeReleaseCompleted").checked &&
     $("legalName").value.trim() && $("email").value.trim() &&
     $("dob").value && adultFromDate($("dob").value);
@@ -328,6 +333,88 @@ $("nextBtn").addEventListener("click",()=>{currentIndex=Math.min(19,currentIndex
 $("skipBtn").addEventListener("click",()=>{const indexes=visibleQuestionIndexes();const pos=indexes.indexOf(currentIndex);currentIndex=indexes[Math.min(pos+1,indexes.length-1)]??currentIndex;renderQuestion();});
 $("credit").addEventListener("change",()=>{$("preferredWrap").hidden=$("credit").value!=="preferred";});
 
+
+function setReleaseMode(mode){
+  releaseMode=mode;
+  try{localStorage.setItem("sac-release-mode",mode);}catch(_){}
+  $("standardReleaseFields").hidden=mode!=="standard";
+  $("anonymousRelease").hidden=mode!=="anonymous";
+  $("chooseStandard").classList.toggle("secondary",mode!=="standard");
+  $("chooseAnonymous").classList.toggle("secondary",mode!=="anonymous");
+  setStatus("");
+}
+$("chooseStandard").addEventListener("click",()=>setReleaseMode("standard"));
+$("chooseAnonymous").addEventListener("click",()=>setReleaseMode("anonymous"));
+$("signatureTypedMode").addEventListener("click",()=>{
+  signatureMode="typed";$("typedSignatureWrap").hidden=false;$("drawnSignatureWrap").hidden=true;
+});
+$("signatureDrawnMode").addEventListener("click",()=>{
+  signatureMode="drawn";$("typedSignatureWrap").hidden=true;$("drawnSignatureWrap").hidden=false;
+});
+const signatureCanvas=$("signatureCanvas"), signatureCtx=signatureCanvas.getContext("2d");
+signatureCtx.strokeStyle="#17263b";signatureCtx.lineWidth=4;signatureCtx.lineCap="round";signatureCtx.lineJoin="round";
+let signatureDrawing=false;
+function signaturePoint(event){
+  const rect=signatureCanvas.getBoundingClientRect();
+  const touch=event.touches?.[0];
+  const clientX=touch?touch.clientX:event.clientX, clientY=touch?touch.clientY:event.clientY;
+  return {x:(clientX-rect.left)*signatureCanvas.width/rect.width,y:(clientY-rect.top)*signatureCanvas.height/rect.height};
+}
+function signatureStart(event){event.preventDefault();signatureDrawing=true;const p=signaturePoint(event);signatureCtx.beginPath();signatureCtx.moveTo(p.x,p.y);}
+function signatureMove(event){if(!signatureDrawing)return;event.preventDefault();const p=signaturePoint(event);signatureCtx.lineTo(p.x,p.y);signatureCtx.stroke();signatureHasInk=true;}
+function signatureEnd(){signatureDrawing=false;}
+signatureCanvas.addEventListener("pointerdown",signatureStart);
+signatureCanvas.addEventListener("pointermove",signatureMove);
+window.addEventListener("pointerup",signatureEnd);
+$("clearSignature").addEventListener("click",()=>{signatureCtx.clearRect(0,0,signatureCanvas.width,signatureCanvas.height);signatureHasInk=false;});
+async function buildAnonymousReleasePdf(){
+  if(!window.jspdf?.jsPDF) throw new Error("The PDF signing library could not be loaded. Please reload the page and try again.");
+  const signatureText=$("typedSignature").value.trim();
+  const signatureImage=signatureMode==="drawn"&&signatureHasInk?signatureCanvas.toDataURL("image/png"):null;
+  if(signatureMode==="typed"&&!signatureText) throw new Error("Please type your signature.");
+  if(signatureMode==="drawn"&&!signatureImage) throw new Error("Please draw your signature.");
+  const {jsPDF}=window.jspdf, doc=new jsPDF({unit:"mm",format:"a4"});
+  const isEs=lang==="es", margin=18, width=174;
+  let y=20;
+  const title=isEs?"SUNDAY AT CHURCH — AUTORIZACIÓN ANÓNIMA DE PARTICIPACIÓN":"SUNDAY AT CHURCH — ANONYMOUS PARTICIPANT RELEASE";
+  doc.setFont("helvetica","bold");doc.setFontSize(15);doc.text(title,margin,y,{maxWidth:width});y+=15;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  const paragraphs=isEs?[
+    "Referencia de participación: se asignará al recibir el envío. Seudónimo opcional: "+($("anonymousPseudonym").value.trim()||"No facilitado"),
+    "1. AUTORIZACIÓN PARA GRABAR Y UTILIZAR. Autorizo a Javier Botella Pérez a grabar y utilizar mi imagen, apariencia, voz, respuestas, testimonios y aportaciones para Sunday At Church, incluido el Confesionario online. El Confesionario online no solicita ni incluye desnudez ni actividad sexual. Mi participación es voluntaria y puedo omitir cualquier pregunta.",
+    "2. CRÉDITO Y ANONIMATO. Puedo utilizar un seudónimo o no aparecer en los créditos. Si deseo anonimato en la grabación, soy responsable de adoptar precauciones antes y durante la grabación. La producción no modificará visualmente el material para ocultar mi identidad, incluidos desenfoques, máscaras, recortes o eliminación de detalles identificativos. Solo podrá acordarse previamente una modificación del tono de voz. No se puede garantizar el anonimato: la voz, el cuerpo, la historia, el entorno o el contexto podrían identificarme.",
+    "3. EDICIÓN, USO Y DISTRIBUCIÓN. Concedo al Director permiso mundial, sin fecha fija de finalización, para incorporar, reproducir, editar, adaptar, subtitular, exhibir, distribuir y utilizar mi participación en Sunday At Church y sus versiones, incluidas proyecciones académicas, festivales, cines, exposiciones culturales, televisión, streaming, distribución online y promoción relacionada con el proyecto. La aportación podrá seleccionarse, acortarse, ordenarse, reorganizarse y subtitularse, pero no se utilizará conscientemente en un contexto sustancialmente engañoso. No tengo derecho automático a aprobar el montaje final. Esto no transfiere la titularidad de obras preexistentes ni renuncia a derechos irrenunciables. No se promete remuneración, regalías ni participación en ingresos.",
+    "4. ARCHIVO Y FUTURA PRODUCTORA. El Director podrá conservar materiales del proyecto como archivo documental y crear o utilizar una productora en el futuro. Cualquier cesión o licencia deberá ser legal y coherente con esta autorización y el Aviso de Privacidad. Una futura empresa no adquiere automáticamente el derecho a utilizar datos personales por recibir los derechos de la película.",
+    "5. PARTICIPACIÓN VOLUNTARIA Y RETIRADA. La participación es voluntaria y no remunerada. Puedo omitir preguntas y detenerme antes de enviar mi aportación. Puedo contactar con el Director para retirar mi consentimiento para futuros tratamientos cuando sea la base jurídica. La retirada no afecta al tratamiento lícito anterior; puede que no sea posible recuperar materiales distribuidos lícitamente a terceros o incorporados a copias fuera del control del Director. Se mantienen mis derechos legales.",
+    "6. CONSENTIMIENTO EXPLÍCITO PARA PROTECCIÓN DE DATOS. Las aportaciones pueden revelar información sobre la vida u orientación sexual, que puede constituir una categoría especial de datos según el artículo 9 del RGPD. El Aviso de Privacidad explica finalidades, bases jurídicas, destinatarios, almacenamiento y derechos. Doy mi consentimiento explícito al tratamiento de los datos de categorías especiales que decida revelar para las finalidades documentales descritas en dicho aviso. Puedo retirar el consentimiento para futuros tratamientos cuando sea la base jurídica.",
+    "Al firmar, confirmo que tengo al menos 18 años, que he leído y comprendido esta autorización y el Aviso de Privacidad y que he tenido oportunidad de formular preguntas. Contacto: hi@javierbotellaperez.com."
+  ]:[
+    "Participant reference: assigned when the submission is received. Optional pseudonym: "+($("anonymousPseudonym").value.trim()||"Not provided"),
+    "1. PERMISSION TO RECORD AND USE. I give Javier Botella Pérez permission to record and use my image, appearance, voice, answers, testimony and contributions for Sunday At Church, including the online Confessional. The online Confessional does not request or include nudity or sexual activity. Participation is voluntary; I may decline any question.",
+    "2. CREDIT AND ANONYMITY. I may use a pseudonym or choose no public credit. If I seek anonymity in footage, I am responsible for precautions before and during recording. The production will not visually alter footage to conceal identity, including blur, masking, cropping or removing identifying details. Only voice-pitch alteration may be agreed in advance. Anonymity cannot be guaranteed; voice, body, story, surroundings or context may identify me.",
+    "3. EDITING, USE AND DISTRIBUTION. I grant the Director worldwide permission, without a fixed end date, to incorporate, reproduce, edit, adapt, subtitle, exhibit, distribute and otherwise use my contribution in Sunday At Church and its versions, including academic screenings, festivals, cinemas, cultural exhibitions, television, streaming, online distribution and project-related promotion. The contribution may be selected, shortened, sequenced, rearranged and subtitled, but will not knowingly be used in a materially misleading context. I have no automatic right to approve the final edit. This does not transfer ownership of pre-existing work or waive non-waivable rights. No payment, royalties or revenue share is promised.",
+    "4. ARCHIVE AND FUTURE PRODUCTION COMPANY. The Director may preserve project materials as a documentary archive and may later establish or use a production company. Any transfer or licence must be lawful and consistent with this release and the Privacy Notice. A future company does not automatically gain the right to use personal data merely by receiving film rights.",
+    "5. VOLUNTARY PARTICIPATION AND WITHDRAWAL. Participation is voluntary and unpaid. I may skip questions and stop before submitting. I may contact the Director to withdraw consent for future processing where consent is the legal basis. Withdrawal does not affect lawful prior processing; material already distributed to third parties or incorporated into copies outside the Director's control may not be retrievable. Statutory rights remain unaffected.",
+    "6. EXPLICIT DATA-PROTECTION CONSENT. Contributions may reveal information about sex life or sexual orientation, which may be special-category personal data under Article 9 GDPR. The Privacy Notice explains purposes, legal bases, recipients, storage and rights. I explicitly consent to processing special-category data I choose to disclose for the documentary purposes in that notice. I may withdraw consent for future processing where consent is the legal basis.",
+    "By signing, I confirm that I am at least 18, have read and understood this release and the accompanying Privacy Notice, and had the opportunity to ask questions. Contact: hi@javierbotellaperez.com."
+  ];
+  for(const para of paragraphs){
+    const lines=doc.splitTextToSize(para,width);
+    const needed=lines.length*4.2+4;
+    if(y+needed>270){doc.addPage();y=20;}
+    doc.text(lines,margin,y);y+=needed;
+  }
+  if(y>245){doc.addPage();y=20;}
+  doc.setFont("helvetica","bold");doc.text(isEs?"FIRMA DE LA PERSONA PARTICIPANTE":"PARTICIPANT SIGNATURE",margin,y);y+=8;
+  if(signatureImage){doc.addImage(signatureImage,"PNG",margin,y,75,19);y+=24;}
+  else{doc.setFont("times","italic");doc.setFontSize(20);doc.text(signatureText,margin,y+8);y+=18;}
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  doc.text((isEs?"Fecha y hora: ":"Date and time: ")+new Date().toISOString(),margin,y+4);
+  doc.text("Sunday At Church · "+(isEs?"Documento de participación":"Participant release"),margin,285);
+  doc.save("Sunday-At-Church-Anonymous-Release.pdf");
+  return doc.output("datauristring").split(",")[1];
+}
+
 window.onTurnstileLoad=function(){
   if(!window.turnstile||turnstileWidgetId!==null)return;
   turnstileWidgetId=window.turnstile.render("#turnstileWidget",{sitekey:TURNSTILE_SITE_KEY,
@@ -342,8 +429,7 @@ $("cameraBtn").addEventListener("click",async()=>{
   catch(e){setStatus(t("cameraError"));}
 });
 $("recordBtn").addEventListener("click",()=>{
-  if(!$("agree").checked||!$("adobeReleaseCompleted").checked||!$("legalName").value.trim()||!$("email").value.trim()||!$("dob").value){setStatus(t("needDetails"));return;}
-  if(!adultFromDate($("dob").value)){setStatus(t("adultOnly"));return;}
+  if(!releaseReady()){setStatus(t("needDetails"));return;}
   if(!stream)return;
   chunks=[];
   let mime="video/webm";
@@ -371,10 +457,8 @@ $("submitBtn").addEventListener("click",async()=>{
   setUploadStatus("");
   const legalName=$("legalName").value.trim(),email=$("email").value.trim(),dob=$("dob").value;
   const credit=$("credit").value,preferredName=$("preferredName").value.trim();
-  if(!legalName||!email||!dob||!$("agree").checked){setUploadStatus(t("needDetails"));return;}
-  if(!$("adobeReleaseCompleted").checked){setUploadStatus(t("needRelease"));return;}
-  if(!adultFromDate(dob)){setUploadStatus(t("adultOnly"));return;}
-  if(credit==="preferred"&&!preferredName){setUploadStatus(t("needPreferred"));return;}
+  if(!releaseReady()){setUploadStatus(t("needDetails"));return;}
+  if(releaseMode==="standard" && credit==="preferred"&&!preferredName){setUploadStatus(t("needPreferred"));return;}
   if(!uploadSession&&!turnstileToken){setUploadStatus(t("needTurnstile"));return;}
   const keys=Object.keys(clips).map(Number).sort((a,b)=>a-b);
   if(!keys.length){setUploadStatus(t("noClips"));return;}
@@ -389,7 +473,12 @@ $("submitBtn").addEventListener("click",async()=>{
       const initResponse=await fetch(`${API_BASE}/api/submissions/init`,{
         method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
-          legalName,email,dob,consent:true,adobeReleaseDeclared:true,
+          releaseMode,legalName,email,dob,
+          consent:releaseMode==="anonymous"?$("anonymousConsent").checked:$("agree").checked,
+          ageConfirmed:releaseMode==="anonymous"?$("anonymousAge").checked:false,
+          adobeReleaseDeclared:releaseMode==="standard"?$("adobeReleaseCompleted").checked:false,
+          anonymousReleasePdfBase64:releaseMode==="anonymous"?await buildAnonymousReleasePdf():"",
+          pseudonym:$("anonymousPseudonym").value.trim(),
           credit,preferredName,language:lang,turnstileToken,answers:keys.map(k=>k+1)
         })
       });
@@ -467,6 +556,11 @@ window.addEventListener("beforeunload",(event)=>{
     return event.returnValue;
   }
 });
+try{
+  const savedReleaseMode=localStorage.getItem("sac-release-mode");
+  if(savedReleaseMode==="anonymous"||savedReleaseMode==="standard")setReleaseMode(savedReleaseMode);
+}catch(_){}
+setReleaseMode("standard");
 applyLanguage();
 showStep(0);
 restoreLocalWork();

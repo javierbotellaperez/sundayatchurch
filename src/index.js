@@ -89,21 +89,32 @@ async function handleInit(request, env, origin) {
     return json({ error: "Security check failed. Please verify again." }, 403, origin, env);
   }
 
+  const releaseMode = data.releaseMode === "anonymous" ? "anonymous" : "standard";
   const legalName = String(data.legalName || "").trim();
   const email = String(data.email || "").trim();
   const dob = String(data.dob || "").trim();
   const consent = data.consent === true;
   const adobeReleaseDeclared = data.adobeReleaseDeclared === true;
+  const ageConfirmed = data.ageConfirmed === true;
   const credit = String(data.credit || "");
   const preferredName = String(data.preferredName || "").trim();
+  const pseudonym = String(data.pseudonym || "").trim().slice(0, 80);
+  const releasePdfBase64 = String(data.anonymousReleasePdfBase64 || "");
   const language = data.language === "es" ? "es" : "en";
   const answers = Array.isArray(data.answers)
     ? [...new Set(data.answers.map(Number).filter(n => Number.isInteger(n) && n >= 1 && n <= MAX_FILES))].sort((a,b) => a-b)
     : [];
 
-  if (!legalName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-      !isAdult(dob) || !consent || !adobeReleaseDeclared) {
-    return json({ error: "Required participant details, age declaration, Adobe release declaration or consent are missing." }, 400, origin, env);
+  if (!consent) return json({ error: "Participation consent is required." }, 400, origin, env);
+  if (releaseMode === "standard") {
+    if (!legalName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+        !isAdult(dob) || !adobeReleaseDeclared) {
+      return json({ error: "Required participant details, age declaration or Adobe release declaration are missing." }, 400, origin, env);
+    }
+  } else {
+    if (!ageConfirmed || !releasePdfBase64.startsWith("JVBERi0") || releasePdfBase64.length > 1400000) {
+      return json({ error: "The anonymous release, signature or age confirmation is missing or invalid." }, 400, origin, env);
+    }
   }
   if (!["full", "preferred", "none"].includes(credit)) {
     return json({ error: "Invalid credit preference." }, 400, origin, env);
@@ -118,10 +129,30 @@ async function handleInit(request, env, origin) {
   const createdAt = new Date().toISOString();
   const session = {
     submissionId, uploadToken, createdAt, expiresAt: Date.now() + SESSION_TTL_MS,
-    expectedAnswers: answers,
-    participant: { legalName, email, dob, credit, preferredName: credit === "preferred" ? preferredName : "" },
-    language, consentRecorded: consent, participantDeclaredAdobeReleaseCompleted: adobeReleaseDeclared
+    expectedAnswers: answers, releaseMode,
+    participant: releaseMode === "anonymous"
+      ? { pseudonym, credit: pseudonym ? "pseudonym" : "no_public_credit" }
+      : { legalName, email, dob, credit, preferredName: credit === "preferred" ? preferredName : "" },
+    language, consentRecorded: consent,
+    participantDeclaredAdobeReleaseCompleted: releaseMode === "standard" ? adobeReleaseDeclared : false,
+    anonymousReleaseKey: releaseMode === "anonymous" ? `pending/${submissionId}/anonymous-release.pdf` : null
   };
+  if (releaseMode === "anonymous") {
+    try {
+      const raw = atob(releasePdfBase64);
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      await env.BUCKET.put(session.anonymousReleaseKey, bytes, {
+        httpMetadata: { contentType: "application/pdf" },
+        customMetadata: { submissionId, purpose: "anonymous-participant-release", createdAt }
+      });
+      const releaseHead = await env.BUCKET.head(session.anonymousReleaseKey);
+      if (!releaseHead || releaseHead.size !== bytes.length) throw new Error("Release PDF verification failed");
+    } catch (error) {
+      console.error("Anonymous release storage failed", { submissionId, error: error instanceof Error ? error.message : String(error) });
+      return json({ error: "The signed anonymous release could not be stored. Please try again." }, 500, origin, env);
+    }
+  }
   await env.BUCKET.put(sessionKey(submissionId), JSON.stringify(session), {
     httpMetadata: { contentType: "application/json" },
     customMetadata: { submissionId, purpose: "temporary-upload-session" }
@@ -254,6 +285,8 @@ async function handleFinalize(request, env, origin, id) {
     releaseStatus: "awaiting_manual_verification",
     footageStatus: "received_pending_review",
     participant: session.participant,
+    releaseMode: session.releaseMode || "standard",
+    anonymousReleaseKey: session.anonymousReleaseKey ? `submissions/${id}/anonymous-release.pdf` : null,
     language: session.language,
     participantDeclaredAdobeReleaseCompleted: session.participantDeclaredAdobeReleaseCompleted,
     consentRecorded: session.consentRecorded,
@@ -267,6 +300,17 @@ async function handleFinalize(request, env, origin, id) {
     httpMetadata: { contentType: "application/json" },
     customMetadata: { submissionId: id, createdAt: session.createdAt }
   });
+  if (session.anonymousReleaseKey) {
+    const releaseObject = await env.BUCKET.get(session.anonymousReleaseKey);
+    if (!releaseObject) return json({ error: "The signed anonymous release is missing from temporary storage." }, 500, origin, env);
+    const finalReleaseKey = `submissions/${id}/anonymous-release.pdf`;
+    await env.BUCKET.put(finalReleaseKey, releaseObject.body, {
+      httpMetadata: { contentType: "application/pdf" },
+      customMetadata: { submissionId: id, purpose: "anonymous-participant-release", createdAt: session.createdAt }
+    });
+    const releaseHead = await env.BUCKET.head(finalReleaseKey);
+    if (!releaseHead || releaseHead.size !== releaseObject.size) return json({ error: "The signed anonymous release could not be verified in final storage." }, 500, origin, env);
+  }
   const metadataHead = await env.BUCKET.head(`submissions/${id}/submission.json`);
   if (!metadataHead) return json({ error: "The final submission record could not be verified. Please contact the filmmaker before closing this page." }, 500, origin, env);
 

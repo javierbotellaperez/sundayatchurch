@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#17263b">
   <title>The Confessional — Sunday At Church</title>
   <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="confessional-en.js"></script>
   <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
 </head>
@@ -57,7 +58,34 @@
       <p class="eyebrow" data-i18n="beforeBegin">BEFORE YOU BEGIN</p>
       <h2 data-i18n="releaseTitle">A quick formality.</h2>
       <p data-i18n="releaseIntro">Please complete the participation release through Adobe Sign before recording. Use the same legal name and email address in both places so the filmmaker can match them manually.</p>
-      <div class="release-copy" id="releaseCopy"></div>
+      <div class="release-choice">
+        <h3>Choose how you would like to sign</h3>
+        <p>Your privacy matters. You can participate in this project without disclosing your real name.</p>
+        <div class="controls"><button type="button" class="xp-button secondary" id="chooseStandard">USE MY REAL NAME · ADOBE SIGN</button><button type="button" class="xp-button" id="chooseAnonymous">PARTICIPATE ANONYMOUSLY</button></div>
+      </div>
+      <div id="anonymousRelease" hidden>
+        <h3>Anonymous participant release</h3>
+        <p>You do not need to provide your legal name, email address or date of birth. Choose an optional pseudonym for your private reference or public credit. The website and security providers may still process technical information, such as your IP address, as explained in the Privacy Notice.</p>
+        <label>Optional pseudonym<input id="anonymousPseudonym" maxlength="80" autocomplete="nickname" placeholder="A name you'd like to use (optional)"></label>
+        <label class="check"><input id="anonymousAge" type="checkbox"> I confirm that I am at least 18 years old.</label>
+        <label class="check"><input id="anonymousReleaseAgree" type="checkbox"> I have read and agree to the participant release terms and the Privacy Notice.</label>
+        <label class="check"><input id="anonymousConsent" type="checkbox"> I explicitly consent to the processing of any special-category personal data I choose to disclose for the documentary purposes described in the Privacy Notice.</label>
+        <h4>Signature</h4>
+        <div class="controls"><button type="button" class="xp-button secondary" id="signatureTypedMode">TYPE MY SIGNATURE</button><button type="button" class="xp-button secondary" id="signatureDrawnMode">DRAW MY SIGNATURE</button></div>
+        <div id="typedSignatureWrap"><label>Type your chosen signature<input id="typedSignature" maxlength="100" placeholder="Your chosen name or mark"></label></div>
+        <div id="drawnSignatureWrap" hidden><canvas id="signatureCanvas" width="720" height="180" style="width:100%;max-width:720px;background:#fff;border:1px solid #888;touch-action:none"></canvas><button type="button" class="xp-button secondary" id="clearSignature">CLEAR SIGNATURE</button></div>
+        <p class="small-note">The signature and completed release will be stored with your submission under a reference code. The production cannot guarantee anonymity in the recorded image, voice or story.</p>
+        <div class="release-copy"><h4>What you are agreeing to</h4>
+        <p><b>1. Permission to record and use.</b> You give Javier Botella Pérez permission to record and use your image, appearance, voice, answers, testimony and contributions for Sunday At Church, including the online Confessional. The online Confessional does not request or include nudity or sexual activity. Participation is voluntary; you may decline any question.</p>
+        <p><b>2. Credit and anonymity.</b> You may use a pseudonym or choose no public credit. If you seek anonymity in footage, you are responsible for precautions before and during recording. The production will not visually alter footage to conceal identity (including blur, masking, cropping or removing identifying details). Only voice-pitch alteration may be agreed in advance. Anonymity cannot be guaranteed; voice, body, story, surroundings or context may identify you.</p>
+        <p><b>3. Editing, use and distribution.</b> You grant the Director worldwide permission, without a fixed end date, to incorporate, reproduce, edit, adapt, subtitle, exhibit, distribute and otherwise use your contribution in Sunday At Church and its versions, including academic screenings, festivals, cinemas, cultural exhibitions, television, streaming, online distribution and project-related promotion. The contribution may be selected, shortened, sequenced, rearranged and subtitled, but will not knowingly be used in a materially misleading context. You have no automatic right to approve the final edit. This does not transfer ownership of pre-existing work or waive non-waivable rights. No payment, royalties or revenue share is promised.</p>
+        <p><b>4. Archive and future production company.</b> The Director may preserve project materials as a documentary archive and may later establish or use a production company. Any transfer or licence must be lawful and consistent with this release and the Privacy Notice. A future company does not automatically gain the right to use personal data merely by receiving film rights.</p>
+        <p><b>5. Voluntary participation and withdrawal.</b> Participation is voluntary and unpaid. You may skip questions and stop before submitting. You may contact the Director to withdraw consent for future processing where consent is the legal basis. Withdrawal does not affect lawful prior processing; material already distributed to third parties or incorporated into copies outside the Director's control may not be retrievable. Statutory rights remain unaffected.</p>
+        <p><b>6. Explicit data-protection consent.</b> Contributions may reveal information about sex life or sexual orientation, which may be special-category personal data under Article 9 GDPR. The Privacy Notice explains purposes, legal bases, recipients, storage and rights. You explicitly consent to processing special-category data you choose to disclose for the documentary purposes in that notice. You may withdraw consent for future processing where consent is the legal basis.</p>
+        <p>By signing, you confirm that you are at least 18, have read and understood this release and the accompanying Privacy Notice, and had the opportunity to ask questions. Contact <a href="mailto:hi@javierbotellaperez.com">hi@javierbotellaperez.com</a>.</p></div>
+      </div>
+      <div id="standardReleaseFields">
+<div class="release-copy" id="releaseCopy"></div>
       <div class="form-grid">
         <label>Full legal name<input id="legalName" autocomplete="name" required></label>
         <label>Email address<input id="email" type="email" autocomplete="email" required></label>
@@ -75,7 +103,8 @@
         </div>
       </div>
     </div>
-  </section>
+        </div>
+</section>
 
   <section class="recorder-window step-panel" data-panel="2" hidden>
     <div class="window-content">
